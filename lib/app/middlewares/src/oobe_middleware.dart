@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/app/routes/app_pages.dart';
+import 'package:file_manger/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
 class OobeMiddleware extends GetMiddleware with AppLogMixin {

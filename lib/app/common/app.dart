@@ -1,10 +1,11 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/app/controllers/src/theme_controller.dart';
-import 'package:flutter_template/app/locales/locales.dart';
+import 'package:file_manger/app/controllers/src/theme_controller.dart';
+import 'package:file_manger/app/locales/locales.dart';
 import 'package:get/get.dart';
 
 import '../routes/app_pages.dart';
+import '../widgets/windows_frame.dart';
 import 'global.dart';
 
 class MainApp extends StatefulWidget {
@@ -39,7 +40,10 @@ class _MainAppState extends State<MainApp> with AppLogMixin {
       translations: locales,
       // supportedLocales: locales.getSupportedLocales(),
       localizationsDelegates: locales.localizationsDelegates,
-      builder: AppMessage().init(),
+      builder: (context, child) {
+        var c = AppMessage().init()(context, child);
+        return WindowsFrame(child: c);
+      },
     );
   }
 }

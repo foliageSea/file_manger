@@ -1,5 +1,5 @@
 import 'package:core/core.dart';
-import 'package:flutter_template/db/services/server_service.dart';
+import 'package:file_manger/db/services/server_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';

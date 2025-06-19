@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/app/layouts/base_layout.dart';
+import 'package:file_manger/app/layouts/base_layout.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +10,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BaseLayout(title: 'Home', child: Container());
+    return BaseLayout(title: 'File Manger', child: Container());
   }
 }

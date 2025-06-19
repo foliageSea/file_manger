@@ -1,13 +1,16 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/interfaces/ioc_register.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_template/app/controllers/controllers.dart';
-import 'package:flutter_template/app/locales/locales.dart';
-import 'package:flutter_template/db/database.dart';
+import 'package:file_manger/app/controllers/controllers.dart';
+import 'package:file_manger/app/locales/locales.dart';
+import 'package:file_manger/db/database.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
+import '../utils/window_manager_util.dart';
+
 class Global {
-  static const String appName = "flutter_template";
+  static const String appName = "file_manger";
   static String appVersion = "1.0.0";
   static final GetIt getIt = GetIt.instance;
 
@@ -18,12 +21,11 @@ class Global {
   }
 
   static List<CommonInitialize> getInitializes() {
-    return [
-      Storage(),
-      Request(),
-      PackageInfoUtil(),
-      Locales(),
-    ];
+    return [Storage(), Request(), PackageInfoUtil(), Locales()];
+  }
+
+  static List<IocRegister> getIocRegisters() {
+    return [WindowManagerUtil()];
   }
 
   static Future init() async {
@@ -40,13 +42,16 @@ class Global {
     await initDatabase();
     registerServices();
 
+    initIocRegisters();
+
+    Global.getIt<WindowManagerUtil>().init();
+
     info('应用初始化完成');
   }
 
   static void registerServices() {
     var themeController = Get.put(ThemeController());
     themeController.init();
-    Get.put(UserController());
   }
 
   static Future initDatabase() async {
@@ -56,5 +61,12 @@ class Global {
 
   static initAppVersion() {
     appVersion = PackageInfoUtil().getVersion();
+  }
+
+  static Future initIocRegisters() async {
+    List<IocRegister> registers = getIocRegisters();
+    for (var register in registers) {
+      register.register(getIt);
+    }
   }
 }
