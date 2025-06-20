@@ -1,9 +1,10 @@
-StackTrace? handleStackTrace(StackTrace? stackTrace) {
+StackTrace? handleStackTrace(StackTrace? stackTrace, [int maxStackLines = 16]) {
   if (stackTrace != null) {
     final stackLines = stackTrace.toString().split('\n');
-    if (stackLines.length > 8) {
+    if (stackLines.length > maxStackLines) {
       stackTrace = StackTrace.fromString(
-          '${stackLines.take(8).join('\n')}\n... (${stackLines.length - 8} more)');
+        '${stackLines.take(maxStackLines).join('\n')}\n... (${stackLines.length - maxStackLines} more)',
+      );
     }
   }
   return stackTrace;

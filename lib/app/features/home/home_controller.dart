@@ -18,14 +18,19 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   }
 
   Future<List<StorageFileItem>> readDir(StorageFileItem file) async {
-    currentFile = file;
-    files.value = [];
-    files.value = await storage.readDir(file);
-    files.refresh();
-    var list = files.map((e) => e.copy()).toList();
-    history.add(FilesHistory(path: file.name ?? '主页', files: list));
-    history.refresh();
-    log('加载目录 ${file.path}');
+    try {
+      currentFile = file;
+      files.value = [];
+      files.value = await storage.readDir(file);
+      files.refresh();
+      var list = files.map((e) => e.copy()).toList();
+      history.add(FilesHistory(path: file.name ?? '主页', files: list));
+      history.refresh();
+      log('加载目录 ${file.path}');
+    } on Exception catch (e, st) {
+      handle(e, st);
+      rethrow;
+    }
     return files;
   }
 
