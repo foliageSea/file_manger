@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomListView extends ListView {
-  final Widget emptyWidget = const Center(child: Text('暂无数据'));
+  final Widget? emptyWidget;
   final int itemCount;
 
   CustomListView({
@@ -12,14 +12,13 @@ class CustomListView extends ListView {
     super.shrinkWrap,
     super.padding,
     super.physics,
-  }) : super.builder(
-          itemCount: itemCount,
-        );
+    this.emptyWidget,
+  }) : super.builder(itemCount: itemCount);
 
   @override
   Widget build(BuildContext context) {
     if (itemCount == 0) {
-      return emptyWidget;
+      return emptyWidget ?? const Center(child: Text('暂无数据'));
     } else {
       return super.build(context);
     }

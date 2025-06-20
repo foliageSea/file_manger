@@ -18,12 +18,17 @@ dependencies:
   path_provider: ^2.1.5
   realm: ^20.1.1
   path: ^1.9.0
-  csv: ^6.0.0
   get_it: ^8.0.3
   google_fonts: ^6.2.1
   flex_color_scheme: ^8.2.0
   webdav_client: ^1.2.2
   window_manager: ^0.5.0
+  lucide_icons_flutter: ^3.0.5
+  flutter_breadcrumb: ^1.0.1
+  dartx: ^1.2.0
+  fvp: ^0.32.1
+  video_player: ^2.10.0
+  flick_video_player: ^0.9.0
 
 dependency_overrides:
   core:

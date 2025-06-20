@@ -7,8 +7,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 
-import '../utils/csv_localization_loader.dart';
-
 class Locales extends Translations
     with AppLogMixin
     implements CommonInitialize {
@@ -63,19 +61,6 @@ class Locales extends Translations
     }
   }
 
-  Future loadLocaleByCSV() async {
-    try {
-      Map<String, Map<String, String>> map =
-          await CSVLocalizationLoader.loadTranslations();
-      for (var locale in SupportedLocales.values) {
-        locales[locale] = map[locale.locale]!;
-      }
-      log('加载CSV语言成功');
-    } catch (e, st) {
-      handle(e, st, '加载CSV语言包失败');
-    }
-  }
-
   List<Locale> getSupportedLocales() {
     return SupportedLocales.values.map((e) => e.localeObj).toList();
   }
@@ -86,9 +71,7 @@ class Locales extends Translations
       orElse: () => SupportedLocales.zh,
     );
 
-    await Get.updateLocale(
-      key.localeObj,
-    );
+    await Get.updateLocale(key.localeObj);
     await Storage().set(StorageKeys.locale, key.locale);
     log('切换语言包: ${key.locale}');
   }
@@ -98,9 +81,7 @@ class Locales extends Translations
       (element) => element.locale == locale,
       orElse: () => SupportedLocales.zh,
     );
-    await Get.updateLocale(
-      key.localeObj,
-    );
+    await Get.updateLocale(key.localeObj);
     await Storage().set(StorageKeys.locale, key.locale);
     log('切换语言包: ${key.locale}');
   }

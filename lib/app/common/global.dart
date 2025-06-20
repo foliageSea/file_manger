@@ -6,6 +6,7 @@ import 'package:file_manger/app/locales/locales.dart';
 import 'package:file_manger/db/database.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:fvp/fvp.dart' as fvp;
 
 import '../utils/window_manager_util.dart';
 
@@ -41,10 +42,11 @@ class Global {
     initAppVersion();
     await initDatabase();
     registerServices();
-
     initIocRegisters();
 
-    Global.getIt<WindowManagerUtil>().init();
+    await Global.getIt<WindowManagerUtil>().init();
+
+    initFvp();
 
     info('应用初始化完成');
   }
@@ -68,5 +70,23 @@ class Global {
     for (var register in registers) {
       register.register(getIt);
     }
+  }
+
+  static initFvp() async {
+    fvp.registerWith(
+      options: {
+        // 'fastSeek': true,
+        'player': {
+          // if (Platform.isAndroid) 'audio.renderer': 'AudioTrack',
+          'avio.reconnect': '1',
+          'avio.reconnect_delay_max': '7',
+          'buffer': '2000+80000',
+          'demux.buffer.ranges': '8',
+        },
+        // if (Platform.isAndroid)
+        //   'subtitleFontFile': 'assets/fonts/NotoSansCJKsc-Medium.otf',
+        'global': {'log': 'debug'},
+      },
+    );
   }
 }

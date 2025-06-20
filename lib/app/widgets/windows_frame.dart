@@ -1,8 +1,9 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
+
+import '../utils/theme_color_util.dart';
 
 class WindowsFrame extends StatelessWidget {
   final Widget child;
@@ -32,7 +33,7 @@ class WindowsFrame extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+      color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
       padding: const EdgeInsets.all(4.0),
       child: ClipRRect(
         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -44,7 +45,7 @@ class WindowsFrame extends StatelessWidget {
 
   Widget _buildTitleBar(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+      color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
