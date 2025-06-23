@@ -29,7 +29,7 @@ class _FilesPageState extends State<FilesPage> {
   void initState() {
     super.initState();
 
-    controller.init(widget.serverModel);
+    controller.init(widget.serverModel).then((_) => setState(() {}));
   }
 
   @override
@@ -49,15 +49,39 @@ class _FilesPageState extends State<FilesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseLayout(
-      title: widget.serverModel.name,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Obx(() => _buildPath()),
-            Flexible(child: _buildFileListFutureBuilder()),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        var result = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('提示'),
+              content: const Text('是否返回?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('取消'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('确定'),
+                ),
+              ],
+            );
+          },
+        );
+        return result ?? false;
+      },
+      child: BaseLayout(
+        title: widget.serverModel.name,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Obx(() => _buildPath()),
+              Flexible(child: _buildFileListFutureBuilder()),
+            ],
+          ),
         ),
       ),
     );
