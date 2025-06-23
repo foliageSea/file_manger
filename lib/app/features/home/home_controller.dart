@@ -1,29 +1,46 @@
 import 'package:core/core.dart';
 import 'package:dartx/dartx.dart';
+import 'package:file_manger/app/common/global.dart';
 import 'package:file_manger/app/constants/constants.dart';
 import 'package:file_manger/app/features/video/video_page.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
+import 'package:file_manger/db/models/server_model.dart';
+import 'package:file_manger/db/services/server_service.dart';
 import 'package:get/get.dart';
+import 'package:realm/realm.dart';
 
 class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   late FileStorage storage;
   var files = <StorageFileItem>[].obs;
   final history = <FilesHistory>[].obs;
   Future<List<StorageFileItem>>? future;
-  late StorageFileItem currentFile;
+  StorageFileItem? currentFile;
+  ServerService serverService = Global.getIt();
+  final servers = <ServerModel>[].obs;
 
-  Future initStorage() async {
+  Future initStorage(ServerModel server) async {
     storage = WebDavFileStorage();
-    await storage.init();
+    await storage.init(server);
+    log('连接成功 ${server.url}');
   }
 
   Future<List<StorageFileItem>> readDir(StorageFileItem file) async {
     try {
       currentFile = file;
-      files.value = [];
-      files.value = await storage.readDir(file);
+      var dirs = await storage.readDir(file);
+
+      dirs = dirs.where((e) {
+        for (var item in excludeStartWith) {
+          if (e.name?.startsWith(item) == true) {
+            return false;
+          }
+        }
+        return true;
+      }).toList();
+
+      files.value = dirs;
       files.refresh();
-      var list = files.map((e) => e.copy()).toList();
+      var list = dirs.map((e) => e.copy()).toList();
       history.add(FilesHistory(path: file.name ?? '主页', files: list));
       history.refresh();
       log('加载目录 ${file.path}');
@@ -38,9 +55,8 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     if (history.length == 1) {
       return;
     }
-    files.value = history[index].files;
+    files.value = history[index].files.map((e) => e.copy()).toList();
     files.refresh();
-
     var list = history.slice(0, index);
     history.value = list;
     history.refresh();
@@ -63,9 +79,50 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     showToast('暂不支持该文件类型');
   }
 
-  Future init() async {
-    await initStorage();
+  Future init(ServerModel server) async {
+    reset();
+    await initStorage(server);
     future = readDir(StorageFileItem()..path = '/');
+  }
+
+  void reset() {
+    currentFile = null;
+    history.value = [];
+    history.refresh();
+    files.value = [];
+    files.refresh();
+  }
+
+  Future addServer(Map<String, String> formData) async {
+    ServerModel server = ServerModel(
+      ObjectId(),
+      formData['server']!,
+      formData['username']!,
+      formData['password']!,
+      formData['name']!,
+    );
+
+    await serverService.addServer(server);
+
+    showToast('新增成功');
+
+    getServers();
+  }
+
+  void getServers() {
+    servers.value = serverService.getServers().map((e) => e).toList();
+    servers.refresh();
+  }
+
+  Future deleteServer(ServerModel server) async {
+    await serverService.deleteServer(server);
+    getServers();
+  }
+
+  @override
+  void onInit() async {
+    super.onInit();
+    getServers();
   }
 }
 

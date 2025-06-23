@@ -29,9 +29,15 @@ class ThemeController extends GetxService with AppLogMixin {
   }
 
   ThemeData getDarkThemeData() {
-    return FlexThemeData.dark(
-      scheme: flexSchemeMap[flexScheme.value],
-    ).copyWith(textTheme: GoogleFonts.notoSansScTextTheme());
+    var themeData = FlexThemeData.dark(scheme: flexSchemeMap[flexScheme.value]);
+    var colorScheme = themeData.colorScheme;
+    return themeData.copyWith(
+      textTheme: GoogleFonts.notoSansScTextTheme(
+        ThemeData.dark(
+          useMaterial3: true,
+        ).copyWith(colorScheme: colorScheme).textTheme,
+      ),
+    );
   }
 
   ThemeMode getThemeMode() {

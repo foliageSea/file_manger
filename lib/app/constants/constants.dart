@@ -13,3 +13,5 @@ const supportVideoExtensions = [
   '.m4p',
   '.m4b',
 ];
+
+const excludeStartWith = ['.', '_', '#'];

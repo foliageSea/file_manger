@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:dartx/dartx.dart';
+import 'package:file_manger/db/models/server_model.dart';
 import 'package:webdav_client/webdav_client.dart';
 
 abstract class FileStorage {
-  Future init();
+  Future init(ServerModel server);
 
   Future<List<StorageFileItem>> readDir(StorageFileItem file);
 
@@ -17,8 +18,13 @@ class WebDavFileStorage extends FileStorage {
   late Client client;
 
   @override
-  Future init() async {
-    client = newClient('http://127.0.0.1:5005', debug: false);
+  Future init(ServerModel server) async {
+    client = newClient(
+      server.url,
+      debug: false,
+      user: server.username,
+      password: server.password,
+    );
   }
 
   @override

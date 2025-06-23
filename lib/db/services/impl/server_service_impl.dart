@@ -8,7 +8,27 @@ class ServerServiceImpl with AppDatabaseMixin implements ServerService {
   }
 
   @override
-  Future<List> getServers() async {
-    return [];
+  Future<void> addServer(ServerModel server) async {
+    await serverRepository.addServer(server);
+  }
+
+  @override
+  Future<void> deleteServer(ServerModel server) async {
+    await serverRepository.deleteServer(server);
+  }
+
+  @override
+  ServerModel? getServerById(ObjectId id) {
+    return serverRepository.getServerById(id);
+  }
+
+  @override
+  Future<void> updateServer(ServerModel server) async {
+    await serverRepository.updateServer(server);
+  }
+
+  @override
+  RealmResults<ServerModel> getServers() {
+    return serverRepository.getServers();
   }
 }

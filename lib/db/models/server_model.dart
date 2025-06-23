@@ -9,4 +9,5 @@ class _ServerModel {
   late String url;
   late String username;
   late String password;
+  late String name;
 }

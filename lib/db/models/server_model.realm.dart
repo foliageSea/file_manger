@@ -16,11 +16,13 @@ class ServerModel extends _ServerModel
     String url,
     String username,
     String password,
+    String name,
   ) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'url', url);
     RealmObjectBase.set(this, 'username', username);
     RealmObjectBase.set(this, 'password', password);
+    RealmObjectBase.set(this, 'name', name);
   }
 
   ServerModel._();
@@ -48,13 +50,18 @@ class ServerModel extends _ServerModel
   set password(String value) => RealmObjectBase.set(this, 'password', value);
 
   @override
+  String get name => RealmObjectBase.get<String>(this, 'name') as String;
+  @override
+  set name(String value) => RealmObjectBase.set(this, 'name', value);
+
+  @override
   Stream<RealmObjectChanges<ServerModel>> get changes =>
       RealmObjectBase.getChanges<ServerModel>(this);
 
   @override
-  Stream<RealmObjectChanges<ServerModel>> changesFor(
-          [List<String>? keyPaths]) =>
-      RealmObjectBase.getChangesFor<ServerModel>(this, keyPaths);
+  Stream<RealmObjectChanges<ServerModel>> changesFor([
+    List<String>? keyPaths,
+  ]) => RealmObjectBase.getChangesFor<ServerModel>(this, keyPaths);
 
   @override
   ServerModel freeze() => RealmObjectBase.freezeObject<ServerModel>(this);
@@ -65,6 +72,7 @@ class ServerModel extends _ServerModel
       'url': url.toEJson(),
       'username': username.toEJson(),
       'password': password.toEJson(),
+      'name': name.toEJson(),
     };
   }
 
@@ -77,12 +85,14 @@ class ServerModel extends _ServerModel
         'url': EJsonValue url,
         'username': EJsonValue username,
         'password': EJsonValue password,
+        'name': EJsonValue name,
       } =>
         ServerModel(
           fromEJson(id),
           fromEJson(url),
           fromEJson(username),
           fromEJson(password),
+          fromEJson(name),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -92,13 +102,21 @@ class ServerModel extends _ServerModel
     RealmObjectBase.registerFactory(ServerModel._);
     register(_toEJson, _fromEJson);
     return const SchemaObject(
-        ObjectType.realmObject, ServerModel, 'ServerModel', [
-      SchemaProperty('id', RealmPropertyType.objectid,
-          indexType: RealmIndexType.regular),
-      SchemaProperty('url', RealmPropertyType.string),
-      SchemaProperty('username', RealmPropertyType.string),
-      SchemaProperty('password', RealmPropertyType.string),
-    ]);
+      ObjectType.realmObject,
+      ServerModel,
+      'ServerModel',
+      [
+        SchemaProperty(
+          'id',
+          RealmPropertyType.objectid,
+          indexType: RealmIndexType.regular,
+        ),
+        SchemaProperty('url', RealmPropertyType.string),
+        SchemaProperty('username', RealmPropertyType.string),
+        SchemaProperty('password', RealmPropertyType.string),
+        SchemaProperty('name', RealmPropertyType.string),
+      ],
+    );
   }();
 
   @override

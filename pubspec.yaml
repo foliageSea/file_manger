@@ -29,6 +29,7 @@ dependencies:
   fvp: ^0.32.1
   video_player: ^2.10.0
   flick_video_player: ^0.9.0
+  flutter_staggered_grid_view: ^0.7.0
 
 dependency_overrides:
   core:

@@ -16,7 +16,7 @@ class _BaseLayoutState extends State<BaseLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: _buildTitle()),
+      appBar: AppBar(title: _buildTitle(), actions: widget.actions),
       body: widget.child,
     );
   }
