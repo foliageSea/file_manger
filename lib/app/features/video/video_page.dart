@@ -54,6 +54,7 @@ class _VideoPageState extends State<VideoPage> {
       }
       setState(() {});
     });
+    flickManager.flickControlManager?.toggleMute();
     await videoPlayerController.initialize();
     await videoPlayerController.play();
 
