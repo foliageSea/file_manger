@@ -22,16 +22,24 @@ class ThemeController extends GetxService with AppLogMixin {
     '浅色': ThemeMode.light,
   };
 
+  InputDecorationTheme inputDecorationTheme = const InputDecorationTheme(
+    border: OutlineInputBorder(),
+  );
+
   ThemeData getThemeData() {
     return FlexThemeData.light(
       scheme: flexSchemeMap[flexScheme.value],
-    ).copyWith(textTheme: GoogleFonts.notoSansScTextTheme());
+    ).copyWith(
+      textTheme: GoogleFonts.notoSansScTextTheme(),
+      inputDecorationTheme: inputDecorationTheme,
+    );
   }
 
   ThemeData getDarkThemeData() {
     var themeData = FlexThemeData.dark(scheme: flexSchemeMap[flexScheme.value]);
     var colorScheme = themeData.colorScheme;
     return themeData.copyWith(
+      inputDecorationTheme: inputDecorationTheme,
       textTheme: GoogleFonts.notoSansScTextTheme(
         ThemeData.dark(
           useMaterial3: true,
@@ -71,7 +79,7 @@ class ThemeController extends GetxService with AppLogMixin {
   void init() {
     flexScheme.value = Storage()
         .get(StorageKeys.flexScheme)
-        .parseString(defaultValue: flexSchemeMap.keys.toList()[2].toString());
+        .parseString(defaultValue: flexSchemeMap.keys.toList()[4].toString());
     themeMode.value = Storage()
         .get(StorageKeys.themeMode)
         .parseString(defaultValue: themeModeMap.keys.first.toString());

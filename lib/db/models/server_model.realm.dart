@@ -106,11 +106,7 @@ class ServerModel extends _ServerModel
       ServerModel,
       'ServerModel',
       [
-        SchemaProperty(
-          'id',
-          RealmPropertyType.objectid,
-          indexType: RealmIndexType.regular,
-        ),
+        SchemaProperty('id', RealmPropertyType.objectid, primaryKey: true),
         SchemaProperty('url', RealmPropertyType.string),
         SchemaProperty('username', RealmPropertyType.string),
         SchemaProperty('password', RealmPropertyType.string),

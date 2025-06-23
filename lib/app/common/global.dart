@@ -11,7 +11,7 @@ import 'package:fvp/fvp.dart' as fvp;
 import '../utils/window_manager_util.dart';
 
 class Global {
-  static const String appName = "file_manger";
+  static const String appName = "File Manger";
   static String appVersion = "1.0.0";
   static final GetIt getIt = GetIt.instance;
 

@@ -1,3 +1,4 @@
+import 'package:file_manger/app/features/home/widgets/edit_dialog.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,19 @@ class _ActionsDialogState extends State<ActionsDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('编辑'),
+              onTap: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EditDialog(serverModel: widget.serverModel);
+                  },
+                );
+                Get.back();
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.delete),
               title: const Text('删除'),

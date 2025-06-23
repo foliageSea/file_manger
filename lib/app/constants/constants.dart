@@ -15,3 +15,7 @@ const supportVideoExtensions = [
 ];
 
 const excludeStartWith = ['.', '_', '#'];
+
+enum SortBy { name, size, lastModified }
+
+enum SortOrder { asc, desc }

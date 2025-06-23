@@ -1,10 +1,10 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/constants/constants.dart';
 import 'package:file_manger/app/features/home/home_controller.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
-import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:file_manger/app/widgets/horizontal_scroll_with_mouse.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
@@ -80,6 +80,7 @@ class _FilesPageState extends State<FilesPage> {
             children: [
               Obx(() => _buildPath()),
               Flexible(child: _buildFileListFutureBuilder()),
+              _buildTools(),
             ],
           ),
         ),
@@ -97,35 +98,56 @@ class _FilesPageState extends State<FilesPage> {
       future: controller.future,
       errorWidget: errorWidget,
       builder: (context, snapshot) {
-        return _buildFilesList();
+        return Obx(() => _buildFilesList());
       },
     );
   }
 
   Widget _buildFilesList() {
     var files = controller.files;
-    return Obx(
-      () => CustomListView(
-        emptyWidget: const Center(child: Icon(LucideIcons.folderMinus)),
-        itemCount: files.length,
-        itemBuilder: (BuildContext context, int index) {
-          var file = files[index];
-          return ListTile(
-            leading: FileIconGenerator.getIcon(file.name!, file.isDir ?? false),
-            title: Text('${file.name}'),
-            subtitle: _buildSubtitle(file),
-            onTap: () async {
-              if (file.isDir == true) {
-                controller.future = controller.readDir(file);
-                setState(() {});
-                return;
-              }
+    var sortBy = controller.sortBy;
+    var sortOrder = controller.sortOrder;
 
-              await controller.openFile(file);
-            },
-          );
-        },
-      ),
+    if (sortBy.value == SortBy.name) {
+      files.sort((a, b) {
+        var result = a.name!.compareTo(b.name!);
+        return sortOrder.value == SortOrder.asc ? result : -result;
+      });
+    }
+    if (sortBy.value == SortBy.size) {
+      files.sort((a, b) {
+        var result = a.size!.compareTo(b.size!);
+        return sortOrder.value == SortOrder.asc ? result : -result;
+      });
+    }
+
+    if (sortBy.value == SortBy.lastModified) {
+      files.sort((a, b) {
+        var result = a.mTime!.compareTo(b.mTime!);
+        return sortOrder.value == SortOrder.asc ? result : -result;
+      });
+    }
+
+    return CustomListView(
+      emptyWidget: const Center(child: Icon(LucideIcons.folderMinus)),
+      itemCount: files.length,
+      itemBuilder: (BuildContext context, int index) {
+        var file = files[index];
+        return ListTile(
+          leading: FileIconGenerator.getIcon(file.name!, file.isDir ?? false),
+          title: Text('${file.name}'),
+          subtitle: _buildSubtitle(file),
+          onTap: () async {
+            if (file.isDir == true) {
+              controller.future = controller.readDir(file);
+              setState(() {});
+              return;
+            }
+
+            await controller.openFile(file);
+          },
+        );
+      },
     );
   }
 
@@ -139,7 +161,7 @@ class _FilesPageState extends State<FilesPage> {
       height: 50,
       padding: const EdgeInsets.only(left: 8, right: 8),
       decoration: BoxDecoration(
-        color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+        // color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
         borderRadius: BorderRadius.circular(4),
       ),
       child: HorizontalScrollWithMouse(
@@ -184,5 +206,79 @@ class _FilesPageState extends State<FilesPage> {
     } else {
       return Text(calFileSize(file.size), style: style);
     }
+  }
+
+  Widget _buildTools() {
+    var sortBy = controller.sortBy;
+    var sortOrder = controller.sortOrder;
+
+    Widget fileNameOrder() {
+      return sortBy.value == SortBy.name
+          ? sortOrder.value == SortOrder.asc
+                ? const Icon(Icons.arrow_upward_rounded)
+                : const Icon(Icons.arrow_downward_rounded)
+          : Container(width: 20);
+    }
+
+    Widget fileSizeOrder() {
+      return sortBy.value == SortBy.size
+          ? sortOrder.value == SortOrder.asc
+                ? const Icon(Icons.arrow_upward_rounded)
+                : const Icon(Icons.arrow_downward_rounded)
+          : Container(width: 20);
+    }
+
+    Widget lastModifiedOrder() {
+      return sortBy.value == SortBy.lastModified
+          ? sortOrder.value == SortOrder.asc
+                ? const Icon(Icons.arrow_upward_rounded)
+                : const Icon(Icons.arrow_downward_rounded)
+          : Container(width: 20);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        PopupMenuButton(
+          icon: const Icon(Icons.sort_rounded),
+          // clipBehavior: Clip.hardEdge,
+          constraints: const BoxConstraints(minWidth: 200),
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem(
+                child: ListTile(
+                  mouseCursor: SystemMouseCursors.click,
+                  title: const Text('文件名称'),
+                  trailing: Obx(() => fileNameOrder()),
+                  onTap: () {
+                    controller.updateOrder(SortBy.name);
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                child: ListTile(
+                  mouseCursor: SystemMouseCursors.click,
+                  title: const Text('文件大小'),
+                  trailing: Obx(() => fileSizeOrder()),
+                  onTap: () {
+                    controller.updateOrder(SortBy.size);
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                child: ListTile(
+                  mouseCursor: SystemMouseCursors.click,
+                  title: const Text('修改时间'),
+                  trailing: Obx(() => lastModifiedOrder()),
+                  onTap: () {
+                    controller.updateOrder(SortBy.lastModified);
+                  },
+                ),
+              ),
+            ];
+          },
+        ),
+      ],
+    );
   }
 }

@@ -18,6 +18,9 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   ServerService serverService = Global.getIt();
   final servers = <ServerModel>[].obs;
 
+  final Rx<SortBy> sortBy = SortBy.name.obs;
+  final Rx<SortOrder> sortOrder = SortOrder.asc.obs;
+
   Future initStorage(ServerModel server) async {
     storage = WebDavFileStorage();
     await storage.init(server);
@@ -109,6 +112,27 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     getServers();
   }
 
+  Future updateServer(ServerModel server, Map<String, String> formData) async {
+    ServerModel updateServer = ServerModel(
+      server.id,
+      formData['server']!,
+      formData['username']!,
+      formData['password']!,
+      formData['name']!,
+    );
+
+    log('${server.id}, ${updateServer.id}');
+
+    // server.name = formData['name']!;
+    // server.url = formData['server']!;
+    // server.username = formData['username']!;
+    // server.password = formData['password']!;
+
+    await serverService.updateServer(updateServer);
+    showToast('修改成功');
+    getServers();
+  }
+
   void getServers() {
     servers.value = serverService.getServers().map((e) => e).toList();
     servers.refresh();
@@ -123,6 +147,15 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   void onInit() async {
     super.onInit();
     getServers();
+  }
+
+  void updateOrder(SortBy changeSortBy) {
+    sortBy.value = changeSortBy;
+    sortOrder.value = sortOrder.value == SortOrder.asc
+        ? SortOrder.desc
+        : SortOrder.asc;
+    sortBy.refresh();
+    sortOrder.refresh();
   }
 }
 

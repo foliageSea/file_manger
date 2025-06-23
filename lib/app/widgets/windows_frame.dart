@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_manger/app/common/global.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -50,7 +51,21 @@ class WindowsFrame extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Flexible(
-            child: DragToMoveArea(child: Container(height: titleBarHeight)),
+            child: DragToMoveArea(
+              child: Container(
+                width: double.infinity,
+                height: titleBarHeight,
+                padding: const EdgeInsets.only(left: 8),
+                child: Row(
+                  children: [
+                    Text(
+                      '${Global.appName} v${Global.appVersion}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           SizedBox(
             width: 138,

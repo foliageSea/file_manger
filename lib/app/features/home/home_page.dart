@@ -59,14 +59,15 @@ class _HomePageState extends State<HomePage> {
       return const Center(child: Icon(LucideIcons.folderMinus));
     }
 
+    var primaryColor = ThemeColorUtil.getPrimaryColor(context);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: AlignedGridView.count(
         itemCount: servers.length,
         crossAxisCount: 4,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
         itemBuilder: (context, index) {
           var server = servers[index];
           return Ink(
@@ -86,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Container(
-                height: 120,
+                height: 150,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -97,8 +98,11 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.server, size: 30),
-                    Text(server.name),
+                    Icon(LucideIcons.server, size: 36, color: primaryColor),
+                    Text(
+                      server.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Text(
                       server.username,
                       style: const TextStyle(fontSize: 12, color: Colors.grey),

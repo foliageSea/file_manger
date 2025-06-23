@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:file_manger/app/common/global.dart';
+import 'package:file_manger/db/models/server_model.dart';
 import 'package:file_manger/db/services/server_service.dart';
 
 import 'package:flutter/material.dart';
@@ -7,23 +8,32 @@ import 'package:get/get.dart';
 
 import '../home_controller.dart';
 
-class AddDialog extends StatefulWidget {
-  const AddDialog({super.key});
+class EditDialog extends StatefulWidget {
+  final ServerModel serverModel;
+
+  const EditDialog({super.key, required this.serverModel});
 
   @override
-  State<AddDialog> createState() => _AddDialogState();
+  State<EditDialog> createState() => _EditDialogState();
 }
 
-class _AddDialogState extends State<AddDialog> {
+class _EditDialogState extends State<EditDialog> {
   final controller = Get.find<HomeController>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  AddDialogForm form = AddDialogForm();
+  EditDialogForm form = EditDialogForm();
   ServerService serverService = Global.getIt();
+
+  @override
+  void initState() {
+    super.initState();
+    form.setFormData(widget.serverModel);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('新增'),
+      title: Text('编辑-${widget.serverModel.name}'),
       content: SingleChildScrollView(child: _buildForm()),
       actions: [
         TextButton(
@@ -46,7 +56,7 @@ class _AddDialogState extends State<AddDialog> {
 
     var formData = form.getFormData();
 
-    await controller.addServer(formData);
+    await controller.updateServer(widget.serverModel, formData);
 
     Get.back();
   }
@@ -57,6 +67,7 @@ class _AddDialogState extends State<AddDialog> {
       child: Column(
         children: [
           TextFormField(
+            initialValue: form.name,
             validator: FormValidatorUtil.required,
             onSaved: (value) {
               form.name = value!;
@@ -67,6 +78,7 @@ class _AddDialogState extends State<AddDialog> {
             ),
           ),
           TextFormField(
+            initialValue: form.server,
             validator: FormValidatorUtil.required,
             onSaved: (value) {
               form.server = value!;
@@ -78,6 +90,7 @@ class _AddDialogState extends State<AddDialog> {
             ),
           ),
           TextFormField(
+            initialValue: form.username,
             validator: FormValidatorUtil.required,
             onSaved: (value) {
               form.username = value!;
@@ -88,6 +101,7 @@ class _AddDialogState extends State<AddDialog> {
             ),
           ),
           TextFormField(
+            initialValue: form.password,
             obscureText: true,
             validator: FormValidatorUtil.required,
             onSaved: (value) {
@@ -104,13 +118,13 @@ class _AddDialogState extends State<AddDialog> {
   }
 }
 
-class AddDialogForm {
+class EditDialogForm {
   String name = "";
   String server = "";
   String username = "";
   String password = "";
 
-  AddDialogForm();
+  EditDialogForm();
 
   Map<String, String> getFormData() {
     return {
@@ -119,5 +133,12 @@ class AddDialogForm {
       "username": username,
       "password": password,
     };
+  }
+
+  void setFormData(ServerModel serverModel) {
+    name = serverModel.name;
+    server = serverModel.url;
+    username = serverModel.username;
+    password = serverModel.password;
   }
 }
