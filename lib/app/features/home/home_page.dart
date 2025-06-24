@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
               highlightColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+              hoverColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
               onTap: () {
                 Get.to(FilesPage(serverModel: server));
               },

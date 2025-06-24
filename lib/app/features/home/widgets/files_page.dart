@@ -240,45 +240,60 @@ class _FilesPageState extends State<FilesPage> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         PopupMenuButton(
+          menuPadding: EdgeInsets.zero,
+          padding: EdgeInsets.zero,
           icon: const Icon(Icons.sort_rounded),
           // clipBehavior: Clip.hardEdge,
           constraints: const BoxConstraints(minWidth: 200),
           itemBuilder: (BuildContext context) {
             return [
-              PopupMenuItem(
-                child: ListTile(
-                  mouseCursor: SystemMouseCursors.click,
-                  title: const Text('文件名称'),
-                  trailing: Obx(() => fileNameOrder()),
-                  onTap: () {
-                    controller.updateOrder(SortBy.name);
-                  },
-                ),
+              _buildPopupMenuItem(
+                '文件大小',
+                trailing: Obx(() => fileSizeOrder()),
+                onTap: () {
+                  controller.updateOrder(SortBy.size);
+                },
               ),
-              PopupMenuItem(
-                child: ListTile(
-                  mouseCursor: SystemMouseCursors.click,
-                  title: const Text('文件大小'),
-                  trailing: Obx(() => fileSizeOrder()),
-                  onTap: () {
-                    controller.updateOrder(SortBy.size);
-                  },
-                ),
+              _buildPopupMenuItem(
+                '文件名称',
+                trailing: Obx(() => fileNameOrder()),
+                onTap: () {
+                  controller.updateOrder(SortBy.name);
+                },
               ),
-              PopupMenuItem(
-                child: ListTile(
-                  mouseCursor: SystemMouseCursors.click,
-                  title: const Text('修改时间'),
-                  trailing: Obx(() => lastModifiedOrder()),
-                  onTap: () {
-                    controller.updateOrder(SortBy.lastModified);
-                  },
-                ),
+              _buildPopupMenuItem(
+                '修改时间',
+                trailing: Obx(() => lastModifiedOrder()),
+                onTap: () {
+                  controller.updateOrder(SortBy.lastModified);
+                },
               ),
             ];
           },
         ),
       ],
+    );
+  }
+
+  PopupMenuItem _buildPopupMenuItem(
+    String title, {
+    Widget? trailing,
+    void Function()? onTap,
+  }) {
+    return PopupMenuItem(
+      padding: EdgeInsets.zero,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          height: kMinInteractiveDimension,
+          padding: const EdgeInsets.only(left: 8, right: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text(title), trailing ?? Container()],
+          ),
+        ),
+      ),
     );
   }
 }
