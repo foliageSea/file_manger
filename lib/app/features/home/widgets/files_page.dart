@@ -240,6 +240,7 @@ class _FilesPageState extends State<FilesPage> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         PopupMenuButton(
+          tooltip: '排序',
           menuPadding: EdgeInsets.zero,
           padding: EdgeInsets.zero,
           icon: const Icon(Icons.sort_rounded),
@@ -250,22 +251,22 @@ class _FilesPageState extends State<FilesPage> {
               _buildPopupMenuItem(
                 '文件大小',
                 trailing: Obx(() => fileSizeOrder()),
-                onTap: () {
-                  controller.updateOrder(SortBy.size);
+                onTap: () async {
+                  await controller.updateOrder(SortBy.size);
                 },
               ),
               _buildPopupMenuItem(
                 '文件名称',
                 trailing: Obx(() => fileNameOrder()),
-                onTap: () {
-                  controller.updateOrder(SortBy.name);
+                onTap: () async {
+                  await controller.updateOrder(SortBy.name);
                 },
               ),
               _buildPopupMenuItem(
                 '修改时间',
                 trailing: Obx(() => lastModifiedOrder()),
-                onTap: () {
-                  controller.updateOrder(SortBy.lastModified);
+                onTap: () async {
+                  await controller.updateOrder(SortBy.lastModified);
                 },
               ),
             ];

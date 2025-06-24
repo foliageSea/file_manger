@@ -147,15 +147,33 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   void onInit() async {
     super.onInit();
     getServers();
+    loadCache();
   }
 
-  void updateOrder(SortBy changeSortBy) {
+  void loadCache() {
+    var sortByStr = Storage().get(StorageKeys.sortBy);
+    var sortOrderStr = Storage().get(StorageKeys.sortOrder);
+    if (sortByStr != null) {
+      sortBy.value = SortBy.values.firstWhere((e) => e.name == sortByStr);
+      sortBy.refresh();
+    }
+    if (sortOrderStr != null) {
+      sortOrder.value = SortOrder.values.firstWhere(
+        (e) => e.name == sortOrderStr,
+      );
+      sortOrder.refresh();
+    }
+  }
+
+  Future updateOrder(SortBy changeSortBy) async {
     sortBy.value = changeSortBy;
     sortOrder.value = sortOrder.value == SortOrder.asc
         ? SortOrder.desc
         : SortOrder.asc;
     sortBy.refresh();
     sortOrder.refresh();
+    await Storage().set(StorageKeys.sortBy, sortBy.value.name);
+    await Storage().set(StorageKeys.sortOrder, sortOrder.value.name);
   }
 }
 

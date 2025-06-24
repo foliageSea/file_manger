@@ -6,4 +6,6 @@ enum StorageKeys {
   flexScheme,
   themeMode,
   locale,
+  sortBy,
+  sortOrder,
 }
