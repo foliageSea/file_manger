@@ -64,55 +64,58 @@ class _EditDialogState extends State<EditDialog> {
   Form _buildForm() {
     return Form(
       key: formKey,
-      child: Column(
-        children: [
-          TextFormField(
-            initialValue: form.name,
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.name = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '名称',
-              hintText: '请输入名称',
+      child: SizedBox(
+        width: 350,
+        child: Column(
+          children: [
+            TextFormField(
+              initialValue: form.name,
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.name = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '名称',
+                hintText: '请输入名称',
+              ),
             ),
-          ),
-          TextFormField(
-            initialValue: form.server,
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.server = value!;
-            },
+            TextFormField(
+              initialValue: form.server,
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.server = value!;
+              },
 
-            decoration: const InputDecoration(
-              labelText: '服务器地址',
-              hintText: '请输入服务器地址',
+              decoration: const InputDecoration(
+                labelText: '服务器地址',
+                hintText: '请输入服务器地址',
+              ),
             ),
-          ),
-          TextFormField(
-            initialValue: form.username,
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.username = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '用户名',
-              hintText: '请输入用户名',
+            TextFormField(
+              initialValue: form.username,
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.username = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '用户名',
+                hintText: '请输入用户名',
+              ),
             ),
-          ),
-          TextFormField(
-            initialValue: form.password,
-            obscureText: true,
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.password = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '密码',
-              hintText: '请输入密码',
+            TextFormField(
+              initialValue: form.password,
+              obscureText: true,
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.password = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '密码',
+                hintText: '请输入密码',
+              ),
             ),
-          ),
-        ].insertSizedBoxBetween(height: 16),
+          ].insertSizedBoxBetween(height: 16),
+        ),
       ),
     );
   }

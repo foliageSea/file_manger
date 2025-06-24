@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:dartx/dartx.dart';
 import 'package:file_manger/db/models/server_model.dart';
+import 'package:realm/realm.dart';
 import 'package:webdav_client/webdav_client.dart';
+
+part 'impl/file_storage_impl.dart';
 
 abstract class FileStorage {
   Future init(ServerModel server);
@@ -12,62 +15,8 @@ abstract class FileStorage {
   Future<String> getUrl(StorageFileItem file);
 
   String getAuth();
-}
 
-class WebDavFileStorage extends FileStorage {
-  late Client client;
-
-  @override
-  Future init(ServerModel server) async {
-    client = newClient(
-      server.url,
-      debug: false,
-      user: server.username,
-      password: server.password,
-    );
-  }
-
-  @override
-  Future<List<StorageFileItem>> readDir(StorageFileItem file) async {
-    var list = await client.readDir(file.path!);
-
-    var files = list
-        .map(
-          (e) => StorageFileItem(
-            path: e.path,
-            isDir: e.isDir,
-            name: e.name,
-            mimeType: e.mimeType,
-            size: e.size,
-            eTag: e.eTag,
-            cTime: e.cTime,
-            mTime: e.mTime,
-          ),
-        )
-        .toList();
-
-    return files;
-  }
-
-  @override
-  Future<String> getUrl(StorageFileItem file) async {
-    var uri = client.uri.slice(0, client.uri.length - 2);
-    var path = file.path;
-    var url = Uri.encodeFull('$uri$path');
-    return url;
-  }
-
-  @override
-  String getAuth() {
-    var auth = client.auth;
-    var user = auth.user;
-    var pwd = auth.pwd;
-
-    String getWebDavAuth() =>
-        'Basic ${base64Encode(utf8.encode('$user:$pwd'))}';
-
-    return getWebDavAuth();
-  }
+  ObjectId getServerId();
 }
 
 class StorageFileItem {

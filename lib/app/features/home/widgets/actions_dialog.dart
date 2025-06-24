@@ -15,7 +15,7 @@ class ActionsDialog extends StatefulWidget {
 }
 
 class _ActionsDialogState extends State<ActionsDialog> {
-  final controller = Get.find<HomeController>();
+  HomeController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {

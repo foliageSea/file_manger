@@ -5,7 +5,9 @@ import 'package:file_manger/app/constants/constants.dart';
 import 'package:file_manger/app/features/video/video_page.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/db/models/server_model.dart';
+import 'package:file_manger/db/models/star_model.dart';
 import 'package:file_manger/db/services/server_service.dart';
+import 'package:file_manger/db/services/star_service.dart';
 import 'package:get/get.dart';
 import 'package:realm/realm.dart';
 
@@ -16,10 +18,13 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   Future<List<StorageFileItem>>? future;
   StorageFileItem? currentFile;
   ServerService serverService = Global.getIt();
+  StarService starService = Global.getIt();
   final servers = <ServerModel>[].obs;
 
   final Rx<SortBy> sortBy = SortBy.name.obs;
   final Rx<SortOrder> sortOrder = SortOrder.asc.obs;
+
+  final stars = <StarModel>[].obs;
 
   Future initStorage(ServerModel server) async {
     storage = WebDavFileStorage();
@@ -74,7 +79,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
         var auth = storage.getAuth();
         log('打开视频文件 $url');
         log('令牌 $auth');
-        Get.to(VideoPage(url: url, auth: auth));
+        await Get.to(VideoPage(url: url, auth: auth, title: file.name));
         return;
       }
     }
@@ -82,10 +87,11 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     showToast('暂不支持该文件类型');
   }
 
-  Future init(ServerModel server) async {
+  Future init(ServerModel server, [String? path]) async {
     reset();
     await initStorage(server);
-    future = readDir(StorageFileItem()..path = '/');
+    future = readDir(StorageFileItem()..path = path ?? '/');
+    loadStarsByServerId();
   }
 
   void reset() {
@@ -141,6 +147,35 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   Future deleteServer(ServerModel server) async {
     await serverService.deleteServer(server);
     getServers();
+  }
+
+  Future toggleStarDir(StorageFileItem file) async {
+    var path = file.path ?? "";
+
+    var isStar = stars.any((e) => e.path == path);
+    if (isStar) {
+      var star = stars.firstWhere((e) => e.path == path);
+      await starService.removeStar(star);
+      loadStarsByServerId();
+      showToast('取消收藏');
+      return;
+    }
+
+    var name = file.name ?? "";
+    var serverId = storage.getServerId();
+
+    var model = StarModel(ObjectId(), name, path, serverId);
+    await starService.addStar(model);
+    showToast('收藏成功');
+    loadStarsByServerId();
+  }
+
+  void loadStarsByServerId() {
+    var stars = starService.getStars();
+    var serverId = storage.getServerId();
+    List<StarModel> list = stars.where((e) => e.serverId == serverId).toList();
+    this.stars.value = list;
+    this.stars.refresh();
   }
 
   @override

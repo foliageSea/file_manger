@@ -65,7 +65,7 @@ class Global {
     appVersion = PackageInfoUtil().getVersion();
   }
 
-  static Future initIocRegisters() async {
+  static void initIocRegisters() {
     List<IocRegister> registers = getIocRegisters();
     for (var register in registers) {
       register.register(getIt);

@@ -8,8 +8,9 @@ import 'widgets/custom_flick_landscape_controls.dart';
 class VideoPage extends StatefulWidget {
   final String url;
   final String? auth;
+  final String? title;
 
-  const VideoPage({super.key, required this.url, this.auth});
+  const VideoPage({super.key, required this.url, this.auth, this.title});
 
   @override
   State<VideoPage> createState() => _VideoPageState();
@@ -54,7 +55,7 @@ class _VideoPageState extends State<VideoPage> {
       }
       setState(() {});
     });
-    flickManager.flickControlManager?.toggleMute();
+    await flickManager.flickControlManager?.toggleMute();
     await videoPlayerController.initialize();
     await videoPlayerController.play();
 
@@ -64,7 +65,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(widget.title ?? '视频播放')),
       body: Column(children: [Flexible(child: _buildPlayer())]),
     );
   }

@@ -54,51 +54,54 @@ class _AddDialogState extends State<AddDialog> {
   Form _buildForm() {
     return Form(
       key: formKey,
-      child: Column(
-        children: [
-          TextFormField(
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.name = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '名称',
-              hintText: '请输入名称',
+      child: SizedBox(
+        width: 350,
+        child: Column(
+          children: [
+            TextFormField(
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.name = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '名称',
+                hintText: '请输入名称',
+              ),
             ),
-          ),
-          TextFormField(
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.server = value!;
-            },
+            TextFormField(
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.server = value!;
+              },
 
-            decoration: const InputDecoration(
-              labelText: '服务器地址',
-              hintText: '请输入服务器地址',
+              decoration: const InputDecoration(
+                labelText: '服务器地址',
+                hintText: '请输入服务器地址',
+              ),
             ),
-          ),
-          TextFormField(
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.username = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '用户名',
-              hintText: '请输入用户名',
+            TextFormField(
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.username = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '用户名',
+                hintText: '请输入用户名',
+              ),
             ),
-          ),
-          TextFormField(
-            obscureText: true,
-            validator: FormValidatorUtil.required,
-            onSaved: (value) {
-              form.password = value!;
-            },
-            decoration: const InputDecoration(
-              labelText: '密码',
-              hintText: '请输入密码',
+            TextFormField(
+              obscureText: true,
+              validator: FormValidatorUtil.required,
+              onSaved: (value) {
+                form.password = value!;
+              },
+              decoration: const InputDecoration(
+                labelText: '密码',
+                hintText: '请输入密码',
+              ),
             ),
-          ),
-        ].insertSizedBoxBetween(height: 16),
+          ].insertSizedBoxBetween(height: 16),
+        ),
       ),
     );
   }

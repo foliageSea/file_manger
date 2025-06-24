@@ -14,8 +14,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class FilesPage extends StatefulWidget {
   final ServerModel serverModel;
+  final String? path;
 
-  const FilesPage({super.key, required this.serverModel});
+  const FilesPage({super.key, required this.serverModel, this.path});
 
   @override
   State<FilesPage> createState() => _FilesPageState();
@@ -29,7 +30,9 @@ class _FilesPageState extends State<FilesPage> {
   void initState() {
     super.initState();
 
-    controller.init(widget.serverModel).then((_) => setState(() {}));
+    controller
+        .init(widget.serverModel, widget.path)
+        .then((_) => setState(() {}));
   }
 
   @override
@@ -135,6 +138,7 @@ class _FilesPageState extends State<FilesPage> {
         var file = files[index];
         return ListTile(
           leading: FileIconGenerator.getIcon(file.name!, file.isDir ?? false),
+          trailing: _buildActions(file),
           title: Text('${file.name}'),
           subtitle: _buildSubtitle(file),
           onTap: () async {
@@ -171,14 +175,7 @@ class _FilesPageState extends State<FilesPage> {
           builder: (index) {
             var item = history[index];
             return BreadCrumbItem(
-              content: item.path == '主页'
-                  ? const Icon(Icons.home, size: 16)
-                  : Row(
-                      children: [
-                        const Icon(LucideIcons.folder, size: 16),
-                        Text(item.path),
-                      ].insertSizedBoxBetween(width: 4),
-                    ),
+              content: _buildPathItem(item),
               textColor: Colors.white,
               borderRadius: BorderRadius.circular(4),
               padding: const EdgeInsets.all(8),
@@ -197,6 +194,17 @@ class _FilesPageState extends State<FilesPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildPathItem(FilesHistory item) {
+    return item.path == '主页'
+        ? const Icon(Icons.home, size: 16)
+        : Row(
+            children: [
+              const Icon(LucideIcons.folder, size: 16),
+              Text(item.path),
+            ].insertSizedBoxBetween(width: 4),
+          );
   }
 
   Widget _buildSubtitle(StorageFileItem file) {
@@ -296,5 +304,26 @@ class _FilesPageState extends State<FilesPage> {
         ),
       ),
     );
+  }
+
+  Widget? _buildActions(StorageFileItem file) {
+    Widget buildStarButton() {
+      var stars = controller.stars;
+
+      final isStar = stars.any((element) => element.path == file.path);
+
+      return IconButton(
+        onPressed: () async {
+          await controller.toggleStarDir(file);
+        },
+        icon: Icon(isStar ? Icons.star : Icons.star_border),
+      );
+    }
+
+    if (file.isDir == true) {
+      return Obx(() => buildStarButton());
+    }
+
+    return null;
   }
 }

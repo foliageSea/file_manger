@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/features/star/star_page.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,12 @@ class _ServersPageState extends State<ServersPage> {
     return BaseLayout(
       title: 'File Manger',
       actions: [
+        IconButton(
+          onPressed: () async {
+            await Get.to(const StarPage());
+          },
+          icon: const Icon(Icons.star_border),
+        ),
         IconButton(
           onPressed: () async {
             await showDialog(
