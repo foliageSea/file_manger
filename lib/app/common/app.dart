@@ -19,10 +19,6 @@ class _MainAppState extends State<MainApp> with AppLogMixin {
   @override
   void initState() {
     super.initState();
-
-    PermissionUtil.getInstance().requestPermissions().catchError((e, st) {
-      handle(e, st);
-    });
   }
 
   @override

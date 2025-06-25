@@ -36,6 +36,14 @@ class Global {
 
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();
+    FlutterError.onError = (details) {
+      FlutterError.presentError(details);
+      var e = details.exception;
+      var st = details.stack;
+      AppLogger().handle(e, st);
+    };
+
+    info('应用开始初始化');
     await initCommon();
     initAppVersion();
     await initDatabase();
@@ -51,7 +59,6 @@ class Global {
 
   static Future initCommon() async {
     List<CommonInitialize Function()> initializes = getInitializes();
-    info('应用开始初始化');
     for (var initialize in initializes) {
       var instance = initialize();
       await instance.init();
