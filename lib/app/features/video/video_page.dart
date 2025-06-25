@@ -1,8 +1,10 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/widgets/custom_raw_keyboard_listener.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'key_action_handlers.dart';
 import 'widgets/custom_flick_landscape_controls.dart';
 
 class VideoPage extends StatefulWidget {
@@ -64,9 +66,12 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title ?? '视频播放')),
-      body: Column(children: [Flexible(child: _buildPlayer())]),
+    return CustomRawKeyboardListener(
+      onKey: _onKey,
+      child: Scaffold(
+        appBar: AppBar(title: Text(widget.title ?? '视频播放')),
+        body: Column(children: [Flexible(child: _buildPlayer())]),
+      ),
     );
   }
 
@@ -99,5 +104,9 @@ class _VideoPageState extends State<VideoPage> {
     return isBuffering
         ? const Center(child: CircularProgressIndicator())
         : const SizedBox();
+  }
+
+  void _onKey(key) {
+    keyActionHandlers[key]?.call(flickManager, videoPlayerController);
   }
 }
