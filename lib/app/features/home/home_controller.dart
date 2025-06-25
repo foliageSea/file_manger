@@ -32,7 +32,10 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     log('连接成功 ${server.url}');
   }
 
-  Future<List<StorageFileItem>> readDir(StorageFileItem file) async {
+  Future<List<StorageFileItem>> readDir(
+    StorageFileItem file, [
+    String? path,
+  ]) async {
     try {
       currentFile = file;
       var dirs = await storage.readDir(file);
@@ -48,8 +51,29 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 
       files.value = dirs;
       files.refresh();
-      var list = dirs.map((e) => e.copy()).toList();
-      history.add(FilesHistory(path: file.name ?? '主页', files: list));
+      if (path != null) {
+        var list = path.split('/');
+        if (list.length > 2) {
+          var temp = '';
+          for (var i = 0; i < list.length - 1; i++) {
+            var e = list[i];
+            if (e == '' && i == 0) {
+              temp += '/';
+              history.add(FilesHistory(path: temp, name: temp));
+            } else if (e == '') {
+              continue;
+            } else {
+              temp += '$e/';
+              history.add(FilesHistory(path: temp, name: e));
+            }
+          }
+        }
+      } else {
+        history.add(
+          FilesHistory(path: file.path ?? '/', name: file.name ?? ''),
+        );
+      }
+
       history.refresh();
       log('加载目录 ${file.path}');
     } on Exception catch (e, st) {
@@ -59,12 +83,12 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     return files;
   }
 
-  void jumpToDir(int index) {
+  Future jumpToDir(int index) async {
     if (history.length == 1) {
       return;
     }
-    files.value = history[index].files.map((e) => e.copy()).toList();
-    files.refresh();
+    future = readDir(StorageFileItem()..path = history[index].path);
+    await future;
     var list = history.slice(0, index);
     history.value = list;
     history.refresh();
@@ -90,7 +114,9 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   Future init(ServerModel server, [String? path]) async {
     reset();
     await initStorage(server);
-    future = readDir(StorageFileItem()..path = path ?? '/');
+
+    history.refresh();
+    future = readDir(StorageFileItem()..path = path ?? '/', path);
     loadStarsByServerId();
   }
 
@@ -213,7 +239,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 }
 
 class FilesHistory {
-  FilesHistory({required this.path, required this.files});
+  FilesHistory({required this.path, required this.name});
   final String path;
-  final List<StorageFileItem> files;
+  final String name;
 }

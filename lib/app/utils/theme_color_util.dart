@@ -8,4 +8,8 @@ class ThemeColorUtil {
   static Color getPrimaryColor(BuildContext context) {
     return Theme.of(context).colorScheme.primary;
   }
+
+  static Color getTextColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onBackground;
+  }
 }

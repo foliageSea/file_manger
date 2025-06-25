@@ -74,7 +74,7 @@ class _StarPageState extends State<StarPage> {
   Widget tag(String data) {
     return Container(
       decoration: BoxDecoration(
-        color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+        color: ThemeColorUtil.getPrimaryColor(context).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),

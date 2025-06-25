@@ -5,6 +5,7 @@ import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
+import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:file_manger/app/widgets/horizontal_scroll_with_mouse.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +181,13 @@ class _FilesPageState extends State<FilesPage> {
               borderRadius: BorderRadius.circular(4),
               padding: const EdgeInsets.all(8),
               onTap: () {
-                controller.jumpToDir(index);
+                if (index == history.length - 1) {
+                  return;
+                }
+
+                controller.jumpToDir(index).then((_) {
+                  setState(() {});
+                });
               },
             );
           },
@@ -197,12 +204,15 @@ class _FilesPageState extends State<FilesPage> {
   }
 
   Widget _buildPathItem(FilesHistory item) {
-    return item.path == '主页'
+    return item.path == '/'
         ? const Icon(Icons.home, size: 16)
         : Row(
             children: [
               const Icon(LucideIcons.folder, size: 16),
-              Text(item.path),
+              Text(
+                item.name,
+                style: TextStyle(color: ThemeColorUtil.getTextColor(context)),
+              ),
             ].insertSizedBoxBetween(width: 4),
           );
   }
