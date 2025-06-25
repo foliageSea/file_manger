@@ -21,24 +21,22 @@ class Global {
     AppLogger().info(msg, exception, stackTrace);
   }
 
-  static List<CommonInitialize> getInitializes() {
-    return [Storage(), Request(), PackageInfoUtil(), Locales()];
+  static List<CommonInitialize Function()> getInitializes() {
+    return [
+      () => Storage(),
+      () => Request(),
+      () => PackageInfoUtil(),
+      () => Locales(),
+    ];
   }
 
-  static List<IocRegister> getIocRegisters() {
-    return [WindowManagerUtil()];
+  static List<IocRegister Function()> getIocRegisters() {
+    return [() => WindowManagerUtil()];
   }
 
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();
-
-    List<CommonInitialize> initializes = getInitializes();
-
-    info('应用开始初始化');
-    for (var initialize in initializes) {
-      await initialize.init();
-      info(initialize.getOutput());
-    }
+    await initCommon();
     initAppVersion();
     await initDatabase();
     registerServices();
@@ -49,6 +47,16 @@ class Global {
     initFvp();
 
     info('应用初始化完成');
+  }
+
+  static Future initCommon() async {
+    List<CommonInitialize Function()> initializes = getInitializes();
+    info('应用开始初始化');
+    for (var initialize in initializes) {
+      var instance = initialize();
+      await instance.init();
+      info(instance.getOutput());
+    }
   }
 
   static void registerServices() {
@@ -66,9 +74,10 @@ class Global {
   }
 
   static void initIocRegisters() {
-    List<IocRegister> registers = getIocRegisters();
+    List<IocRegister Function()> registers = getIocRegisters();
     for (var register in registers) {
-      register.register(getIt);
+      var instance = register();
+      instance.register(getIt);
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:file_manger/app/features/home/widgets/edit_dialog.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../home_controller.dart';
 
@@ -25,7 +26,7 @@ class _ActionsDialogState extends State<ActionsDialog> {
         child: Column(
           children: [
             ListTile(
-              leading: const Icon(Icons.edit),
+              leading: const Icon(LucideIcons.pencil),
               title: const Text('编辑'),
               onTap: () async {
                 await showDialog(
@@ -38,7 +39,7 @@ class _ActionsDialogState extends State<ActionsDialog> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete),
+              leading: const Icon(LucideIcons.trash),
               title: const Text('删除'),
               onTap: () async {
                 await controller.deleteServer(widget.serverModel);

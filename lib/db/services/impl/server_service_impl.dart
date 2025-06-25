@@ -28,7 +28,7 @@ class ServerServiceImpl with AppDatabaseMixin implements ServerService {
   }
 
   @override
-  RealmResults<ServerModel> getServers() {
-    return serverRepository.getServers();
+  List<ServerModel> getServers() {
+    return serverRepository.getServers().toList();
   }
 }

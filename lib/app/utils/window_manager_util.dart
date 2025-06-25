@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,13 +10,16 @@ import '../interfaces/ioc_register.dart';
 class WindowManagerUtil extends IocRegister {
   Future init() async {}
 
+  static final Map<String, WindowManagerUtil Function()> _platformMap = {
+    'windows': () => _WindowManagerUtilImpl(),
+    'default': () => _WindowManagerUtilOther(),
+  };
+
   @override
   void register(GetIt getIt) {
-    if (Platform.isWindows) {
-      getIt.registerSingleton<WindowManagerUtil>(_WindowManagerUtilImpl());
-    } else {
-      getIt.registerSingleton<WindowManagerUtil>(_WindowManagerUtilOther());
-    }
+    String platformKey = Platform.isWindows ? 'windows' : 'default';
+    // 从映射表中获取对应平台的实例
+    getIt.registerSingleton<WindowManagerUtil>(_platformMap[platformKey]!());
   }
 }
 
@@ -31,10 +35,12 @@ class _WindowManagerUtilImpl extends WindowManagerUtil {
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.hidden,
     );
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+    unawaited(
+      windowManager.waitUntilReadyToShow(windowOptions, () async {
+        await windowManager.show();
+        await windowManager.focus();
+      }),
+    );
   }
 }
 

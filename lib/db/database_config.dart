@@ -15,7 +15,7 @@ class DatabaseConfig {
     schemaObjects,
     schemaVersion: schemaVersion,
     migrationCallback: _migrate,
-    shouldDeleteIfMigrationNeeded: kReleaseMode ? false : true,
+    // shouldDeleteIfMigrationNeeded: kReleaseMode ? false : true,
   );
 
   static void _migrate(Migration migration, int oldSchemaVersion) {

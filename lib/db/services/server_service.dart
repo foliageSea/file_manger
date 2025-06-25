@@ -7,7 +7,7 @@ import '../repositories/server_repository.dart';
 part 'impl/server_service_impl.dart';
 
 abstract class ServerService {
-  RealmResults<ServerModel> getServers();
+  List<ServerModel> getServers();
 
   Future<void> addServer(ServerModel server);
 

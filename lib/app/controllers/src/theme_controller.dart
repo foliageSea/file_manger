@@ -77,14 +77,23 @@ class ThemeController extends GetxService with AppLogMixin {
   }
 
   void init() {
-    var defaultScheme = flexSchemeMap.keys.toList()[4].toString();
-    var defaultThemeMode = themeModeMap.keys.toList()[1].toString();
+    var defaultScheme = findKeyByValue(flexSchemeMap, FlexScheme.cyanM3)!;
+    var defaultThemeMode = findKeyByValue(themeModeMap, ThemeMode.dark)!;
+
     flexScheme.value = Storage()
         .get(StorageKeys.flexScheme)
         .parseString(defaultValue: defaultScheme);
     themeMode.value = Storage()
         .get(StorageKeys.themeMode)
         .parseString(defaultValue: defaultThemeMode);
-    log('加载主题: ${flexScheme.value}, 模式 ${themeMode.value}');
+    log('加载主题: ${flexScheme.value}, 主题模式 ${themeMode.value}');
+  }
+
+  String? findKeyByValue(Map<String, dynamic> map, dynamic value) {
+    try {
+      return map.keys.firstWhere((key) => map[key] == value);
+    } catch (e) {
+      return null; // 未找到返回 null
+    }
   }
 }

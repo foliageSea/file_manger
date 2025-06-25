@@ -12,11 +12,11 @@ import 'package:get/get.dart';
 import 'package:realm/realm.dart';
 
 class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
-  late FileStorage storage;
-  var files = <StorageFileItem>[].obs;
+  late FileStorage fileStorage;
+  var files = <FileItem>[].obs;
   final history = <FilesHistory>[].obs;
-  Future<List<StorageFileItem>>? future;
-  StorageFileItem? currentFile;
+  Future<List<FileItem>>? future;
+  FileItem? currentFile;
   ServerService serverService = Global.getIt();
   StarService starService = Global.getIt();
   final servers = <ServerModel>[].obs;
@@ -26,55 +26,22 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 
   final stars = <StarModel>[].obs;
 
-  Future initStorage(ServerModel server) async {
-    storage = WebDavFileStorage();
-    await storage.init(server);
+  Future initFileStorage(ServerModel server) async {
+    fileStorage = WebDavFileStorage();
+    await fileStorage.init(server);
     log('连接成功 ${server.url}');
   }
 
-  Future<List<StorageFileItem>> readDir(
-    StorageFileItem file, [
-    String? path,
-  ]) async {
+  Future<List<FileItem>> readDir(FileItem file, [String? path]) async {
     try {
       currentFile = file;
-      var dirs = await storage.readDir(file);
-
-      dirs = dirs.where((e) {
-        for (var item in excludeStartWith) {
-          if (e.name?.startsWith(item) == true) {
-            return false;
-          }
-        }
-        return true;
-      }).toList();
-
+      var dirs = await fileStorage.readDir(file);
+      dirs = filterFiles(dirs);
       files.value = dirs;
       files.refresh();
-      if (path != null) {
-        var list = path.split('/');
-        if (list.length > 2) {
-          var temp = '';
-          for (var i = 0; i < list.length - 1; i++) {
-            var e = list[i];
-            if (e == '' && i == 0) {
-              temp += '/';
-              history.add(FilesHistory(path: temp, name: temp));
-            } else if (e == '') {
-              continue;
-            } else {
-              temp += '$e/';
-              history.add(FilesHistory(path: temp, name: e));
-            }
-          }
-        }
-      } else {
-        history.add(
-          FilesHistory(path: file.path ?? '/', name: file.name ?? ''),
-        );
-      }
 
-      history.refresh();
+      handlePushHistory(file, path);
+
       log('加载目录 ${file.path}');
     } on Exception catch (e, st) {
       handle(e, st);
@@ -83,24 +50,62 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     return files;
   }
 
+  List<FileItem> filterFiles(List<FileItem> dirs) {
+    dirs = dirs.where((e) {
+      for (var item in excludeStartWith) {
+        if (e.name?.startsWith(item) == true) {
+          return false;
+        }
+      }
+      return true;
+    }).toList();
+    return dirs;
+  }
+
+  void handlePushHistory(FileItem file, [String? path]) {
+    if (path != null) {
+      var list = path.split('/');
+      if (list.length > 2) {
+        var temp = '';
+        for (var i = 0; i < list.length - 1; i++) {
+          var e = list[i];
+          if (e == '' && i == 0) {
+            temp += '/';
+            history.add(FilesHistory(path: temp, name: temp));
+          } else if (e == '') {
+            continue;
+          } else {
+            temp += '$e/';
+            history.add(FilesHistory(path: temp, name: e));
+          }
+        }
+      }
+    } else {
+      history.add(FilesHistory(path: file.path ?? '/', name: file.name ?? ''));
+    }
+    history.refresh();
+  }
+
   Future jumpToDir(int index) async {
     if (history.length == 1) {
       return;
     }
-    future = readDir(StorageFileItem()..path = history[index].path);
+    if (index == history.length - 1) {
+      return;
+    }
+    future = readDir(FileItem()..path = history[index].path);
     await future;
     var list = history.slice(0, index);
     history.value = list;
     history.refresh();
   }
 
-  Future openFile(StorageFileItem file) async {
-    var url = await storage.getUrl(file);
-    storage.getAuth();
+  Future openFile(FileItem file) async {
+    var url = await fileStorage.getUrl(file);
+    var auth = fileStorage.getAuth();
 
     for (var element in supportVideoExtensions) {
       if (file.name?.endsWith(element) == true) {
-        var auth = storage.getAuth();
         log('打开视频文件 $url');
         log('令牌 $auth');
         await Get.to(VideoPage(url: url, auth: auth, title: file.name));
@@ -112,15 +117,13 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   }
 
   Future init(ServerModel server, [String? path]) async {
-    reset();
-    await initStorage(server);
-
-    history.refresh();
-    future = readDir(StorageFileItem()..path = path ?? '/', path);
+    resetFilesPageState();
+    await initFileStorage(server);
+    future = readDir(FileItem()..path = path ?? '/', path);
     loadStarsByServerId();
   }
 
-  void reset() {
+  void resetFilesPageState() {
     currentFile = null;
     history.value = [];
     history.refresh();
@@ -153,20 +156,13 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
       formData['name']!,
     );
 
-    log('${server.id}, ${updateServer.id}');
-
-    // server.name = formData['name']!;
-    // server.url = formData['server']!;
-    // server.username = formData['username']!;
-    // server.password = formData['password']!;
-
     await serverService.updateServer(updateServer);
-    showToast('修改成功');
     getServers();
+    showToast('修改成功');
   }
 
   void getServers() {
-    servers.value = serverService.getServers().map((e) => e).toList();
+    servers.value = serverService.getServers();
     servers.refresh();
   }
 
@@ -175,7 +171,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     getServers();
   }
 
-  Future toggleStarDir(StorageFileItem file) async {
+  Future toggleStarDir(FileItem file) async {
     var path = file.path ?? "";
 
     var isStar = stars.any((e) => e.path == path);
@@ -188,7 +184,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     }
 
     var name = file.name ?? "";
-    var serverId = storage.getServerId();
+    var serverId = fileStorage.getServerId();
 
     var model = StarModel(ObjectId(), name, path, serverId);
     await starService.addStar(model);
@@ -198,7 +194,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 
   void loadStarsByServerId() {
     var stars = starService.getStars();
-    var serverId = storage.getServerId();
+    var serverId = fileStorage.getServerId();
     List<StarModel> list = stars.where((e) => e.serverId == serverId).toList();
     this.stars.value = list;
     this.stars.refresh();
@@ -239,7 +235,8 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 }
 
 class FilesHistory {
-  FilesHistory({required this.path, required this.name});
   final String path;
   final String name;
+
+  FilesHistory({required this.path, required this.name});
 }

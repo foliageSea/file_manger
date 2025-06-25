@@ -67,50 +67,62 @@ class _ServersPageState extends State<ServersPage> {
         crossAxisSpacing: 8,
         itemBuilder: (context, index) {
           var server = servers[index];
-          return Ink(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              highlightColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
-              hoverColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
-              onTap: () {
-                Get.to(FilesPage(serverModel: server));
-              },
-              onLongPress: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ActionsDialog(serverModel: server);
-                  },
-                );
-              },
-              child: Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(LucideIcons.server, size: 36, color: primaryColor),
-                    Text(
-                      server.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      server.username,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ].insertSizedBoxBetween(height: 4),
-                ),
+          return card(
+            onTap: () {
+              Get.to(FilesPage(serverModel: server));
+            },
+            onLongPress: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ActionsDialog(serverModel: server);
+                },
+              );
+            },
+            children: [
+              Icon(LucideIcons.server, size: 36, color: primaryColor),
+              Text(
+                server.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
+              Text(
+                server.username,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget card({
+    void Function()? onTap,
+    void Function()? onLongPress,
+    List<Widget> children = const <Widget>[],
+  }) {
+    return Ink(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        highlightColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+        hoverColor: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Container(
+          height: 150,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: ThemeColorUtil.getPrimaryColorWithAlpha(context),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: children.insertSizedBoxBetween(height: 4),
+          ),
+        ),
       ),
     );
   }

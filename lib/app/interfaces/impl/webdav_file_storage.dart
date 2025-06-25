@@ -16,12 +16,12 @@ class WebDavFileStorage extends FileStorage {
   }
 
   @override
-  Future<List<StorageFileItem>> readDir(StorageFileItem file) async {
+  Future<List<FileItem>> readDir(FileItem file) async {
     var list = await client.readDir(file.path!);
 
     var files = list
         .map(
-          (e) => StorageFileItem(
+          (e) => FileItem(
             path: e.path,
             isDir: e.isDir,
             name: e.name,
@@ -38,7 +38,7 @@ class WebDavFileStorage extends FileStorage {
   }
 
   @override
-  Future<String> getUrl(StorageFileItem file) async {
+  Future<String> getUrl(FileItem file) async {
     var uri = client.uri.slice(0, client.uri.length - 2);
     var path = file.path;
     var url = Uri.encodeFull('$uri$path');

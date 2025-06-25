@@ -15,8 +15,8 @@ class StarServiceImpl with AppDatabaseMixin implements StarService {
   }
 
   @override
-  RealmResults<StarModel> getStars() {
-    return starRepository.getStars();
+  List<StarModel> getStars() {
+    return starRepository.getStars().toList();
   }
 
   @override

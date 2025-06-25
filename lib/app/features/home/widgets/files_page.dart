@@ -98,7 +98,7 @@ class _FilesPageState extends State<FilesPage> {
       onPressed: reload,
     );
 
-    return CustomFutureBuilder<List<StorageFileItem>>(
+    return CustomFutureBuilder<List<FileItem>>(
       future: controller.future,
       errorWidget: errorWidget,
       builder: (context, snapshot) {
@@ -181,10 +181,6 @@ class _FilesPageState extends State<FilesPage> {
               borderRadius: BorderRadius.circular(4),
               padding: const EdgeInsets.all(8),
               onTap: () {
-                if (index == history.length - 1) {
-                  return;
-                }
-
                 controller.jumpToDir(index).then((_) {
                   setState(() {});
                 });
@@ -217,7 +213,7 @@ class _FilesPageState extends State<FilesPage> {
           );
   }
 
-  Widget _buildSubtitle(StorageFileItem file) {
+  Widget _buildSubtitle(FileItem file) {
     var style = const TextStyle(fontSize: 12);
     if (file.isDir == true) {
       return Text('目录', style: style);
@@ -316,7 +312,7 @@ class _FilesPageState extends State<FilesPage> {
     );
   }
 
-  Widget? _buildActions(StorageFileItem file) {
+  Widget? _buildActions(FileItem file) {
     Widget buildStarButton() {
       var stars = controller.stars;
 
