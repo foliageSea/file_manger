@@ -1,11 +1,10 @@
 import 'package:core/core.dart';
-import 'package:file_manger/app/widgets/custom_raw_keyboard_listener.dart';
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:file_manger/app/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:get/get.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
-import 'key_action_handlers.dart';
-import 'widgets/custom_flick_landscape_controls.dart';
+import 'video_page_controller.dart';
 
 class VideoPage extends StatefulWidget {
   final String url;
@@ -19,94 +18,64 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  late VideoPlayerController videoPlayerController;
-  late FlickManager flickManager;
+  final controller = Get.put(VideoPageController());
+
   Future? future;
-  bool isBuffering = false;
+
   @override
   void initState() {
     super.initState();
-    future = _initPlayer();
+    controller.setVideoUrl(widget.url);
+    future = controller.createVideoController(token: widget.auth).then((c) {
+      controller.mediaPlayer = c;
+    });
   }
 
   @override
   void dispose() {
-    flickManager.dispose();
     super.dispose();
-  }
-
-  Future<bool> _initPlayer() async {
-    var auth = widget.auth;
-    videoPlayerController = VideoPlayerController.networkUrl(
-      Uri.parse(widget.url),
-      httpHeaders: auth != null ? {'authorization': auth} : {},
-    );
-    flickManager = FlickManager(
-      videoPlayerController: videoPlayerController,
-      autoInitialize: false,
-      autoPlay: false,
-    );
-    videoPlayerController.addListener(() {
-      if (!videoPlayerController.value.isPlaying) {
-        return;
-      }
-      if (videoPlayerController.value.isBuffering) {
-        isBuffering = true;
-      } else {
-        isBuffering = false;
-      }
-      setState(() {});
-    });
-    await flickManager.flickControlManager?.toggleMute();
-    await videoPlayerController.initialize();
-    await videoPlayerController.play();
-
-    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomRawKeyboardListener(
-      onKey: _onKey,
-      child: Scaffold(
-        appBar: AppBar(title: Text(widget.title ?? '视频播放')),
-        body: Column(children: [Flexible(child: _buildPlayer())]),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title ?? '视频'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              var superResolutionType = controller.superResolutionType;
+              superResolutionType.value = (superResolutionType.value % 3) + 1;
+              controller.setShader(superResolutionType.value);
+            },
+            child: Obx(() => _buildMode()),
+          ),
+        ],
+      ),
+      body: Center(
+        child: CustomFutureBuilder(
+          future: future,
+          skipHasData: true,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            var videoController = controller.videoController;
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+              child: Video(controller: videoController),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildPlayer() {
-    return CustomFutureBuilder(
-      future: future,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return Center(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              AspectRatio(
-                aspectRatio: videoPlayerController.value.aspectRatio,
-                child: FlickVideoPlayer(
-                  flickManager: flickManager,
-                  flickVideoWithControls: const FlickVideoWithControls(
-                    controls: CustomFlickLandscapeControls(),
-                  ),
-                ),
-              ),
-              _buildBuffer(),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  SingleChildRenderObjectWidget _buildBuffer() {
-    return isBuffering
-        ? const Center(child: CircularProgressIndicator())
-        : const SizedBox();
-  }
-
-  void _onKey(key) {
-    keyActionHandlers[key]?.call(flickManager, videoPlayerController);
+  Widget _buildMode() {
+    var superResolutionType = controller.superResolutionType;
+    if (superResolutionType.value == SuperResolutionType.lite) {
+      return const Text('效率模式');
+    } else if (superResolutionType.value == SuperResolutionType.full) {
+      return const Text('质量模式');
+    }
+    return const Text('开启超分');
   }
 }

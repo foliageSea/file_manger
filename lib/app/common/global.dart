@@ -7,6 +7,7 @@ import 'package:file_manger/db/database.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:fvp/fvp.dart' as fvp;
+import 'package:media_kit/media_kit.dart';
 
 import '../utils/window_manager_util.dart';
 
@@ -52,7 +53,8 @@ class Global {
 
     await Global.getIt<WindowManagerUtil>().init();
 
-    initFvp();
+    // initFvp();
+    MediaKit.ensureInitialized();
 
     info('应用初始化完成');
   }

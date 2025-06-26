@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/utils/shaders_util.dart';
 import 'package:flutter/material.dart';
 import 'package:file_manger/app/controllers/src/theme_controller.dart';
 import 'package:file_manger/app/locales/locales.dart';
@@ -19,6 +20,8 @@ class _MainAppState extends State<MainApp> with AppLogMixin {
   @override
   void initState() {
     super.initState();
+
+    ShadersUtil.copyShadersToExternalDirectory();
   }
 
   @override

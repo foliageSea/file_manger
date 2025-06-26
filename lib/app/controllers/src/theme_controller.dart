@@ -9,11 +9,11 @@ class ThemeController extends GetxService with AppLogMixin {
   Rx<String> themeMode = ''.obs;
 
   Map<String, FlexScheme> flexSchemeMap = {
-    '绿色M3': FlexScheme.greenM3,
-    '深蓝石': FlexScheme.bigStone,
-    '蓝色M3': FlexScheme.blueM3,
-    '青色M3': FlexScheme.cyanM3,
-    '水鸭M3': FlexScheme.tealM3,
+    // '绿色M3': FlexScheme.greenM3,
+    // '深蓝石': FlexScheme.bigStone,
+    // '蓝色M3': FlexScheme.blueM3,
+    // '青色M3': FlexScheme.cyanM3,
+    // '水鸭M3': FlexScheme.tealM3,
   };
 
   Map<String, ThemeMode> themeModeMap = {
@@ -77,7 +77,12 @@ class ThemeController extends GetxService with AppLogMixin {
   }
 
   void init() {
-    var defaultScheme = findKeyByValue(flexSchemeMap, FlexScheme.cyanM3)!;
+    //注册主题
+    for (var e in FlexScheme.values) {
+      flexSchemeMap[e.name] = e;
+    }
+
+    var defaultScheme = findKeyByValue(flexSchemeMap, FlexScheme.greenM3)!;
     var defaultThemeMode = findKeyByValue(themeModeMap, ThemeMode.dark)!;
 
     flexScheme.value = Storage()

@@ -7,6 +7,8 @@ list(APPEND FLUTTER_PLUGIN_LIST
   awesome_notifications_core
   connectivity_plus
   fvp
+  media_kit_libs_windows_video
+  media_kit_video
   permission_handler_windows
   realm
   screen_retriever_windows

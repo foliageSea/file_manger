@@ -10,6 +10,7 @@ class CustomFutureBuilder<T> extends FutureBuilder<T> {
     Widget? loadingWidget,
     Widget? errorWidget,
     Widget? emptyWidget,
+    bool skipHasData = false,
   }) : super(
          builder: (context, snapshot) {
            if (snapshot.connectionState == ConnectionState.waiting) {
@@ -18,6 +19,9 @@ class CustomFutureBuilder<T> extends FutureBuilder<T> {
            }
            if (snapshot.hasError) {
              return errorWidget ?? const Center(child: Text('加载出错'));
+           }
+           if (skipHasData) {
+             return builder(context, snapshot);
            }
            if (snapshot.hasData && snapshot.data != null) {
              return builder(context, snapshot);
