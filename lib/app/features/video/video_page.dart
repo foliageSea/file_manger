@@ -1,10 +1,10 @@
 import 'package:core/core.dart';
-import 'package:file_manger/app/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
 import 'video_page_controller.dart';
+import 'widgets/controls.dart';
 
 class VideoPage extends StatefulWidget {
   final String url;
@@ -39,19 +39,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title ?? '视频'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              var superResolutionType = controller.superResolutionType;
-              superResolutionType.value = (superResolutionType.value % 3) + 1;
-              controller.setShader(superResolutionType.value);
-            },
-            child: Obx(() => _buildMode()),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(widget.title ?? '视频')),
       body: Center(
         child: CustomFutureBuilder(
           future: future,
@@ -61,21 +49,14 @@ class _VideoPageState extends State<VideoPage> {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-              child: Video(controller: videoController),
+              child: Video(
+                controller: videoController,
+                controls: getDesktopVideoControls,
+              ),
             );
           },
         ),
       ),
     );
-  }
-
-  Widget _buildMode() {
-    var superResolutionType = controller.superResolutionType;
-    if (superResolutionType.value == SuperResolutionType.lite) {
-      return const Text('效率模式');
-    } else if (superResolutionType.value == SuperResolutionType.full) {
-      return const Text('质量模式');
-    }
-    return const Text('开启超分');
   }
 }

@@ -60,6 +60,8 @@ class VideoPageController extends GetxController with AppLogMixin {
       await setShader(superResolutionType.value);
     }
 
+    await mediaPlayer.setVolume(0);
+
     await mediaPlayer.open(
       Media(
         videoUrl,
@@ -87,6 +89,7 @@ class VideoPageController extends GetxController with AppLogMixin {
         ),
       ]);
       log('开启效率模式');
+      superResolutionType.value = type;
       return;
     }
     if (type == SuperResolutionType.full) {
@@ -100,9 +103,19 @@ class VideoPageController extends GetxController with AppLogMixin {
         ),
       ]);
       log('开启质量模式');
+      superResolutionType.value = type;
+
       return;
     }
     await pp.command(['change-list', 'glsl-shaders', 'clr', '']);
+    superResolutionType.value = type;
+
     log('关闭超分辨率');
+  }
+
+  @override
+  void onClose() {
+    mediaPlayer.dispose();
+    super.onClose();
   }
 }
