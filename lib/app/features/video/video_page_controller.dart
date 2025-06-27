@@ -203,14 +203,17 @@ class VideoPageController extends GetxController with AppLogMixin {
     return item?.duration ?? 0;
   }
 
+  void refreshHistory() {
+    try {
+      Get.find<HistoryPageController>().getHistory();
+    } catch (_) {}
+  }
+
   @override
   void onClose() {
     mediaPlayer.dispose();
     _progressTimer?.cancel();
+    refreshHistory();
     super.onClose();
-
-    try {
-      Get.find<HistoryPageController>().getHistory();
-    } catch (_) {}
   }
 }

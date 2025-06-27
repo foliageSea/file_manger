@@ -65,11 +65,13 @@ class _ServersPageState extends State<ServersPage> {
 
     var primaryColor = ThemeColorUtil.getPrimaryColor(context);
 
+    var crossAxisCount = MediaQuery.of(context).size.width > 768 ? 4 : 2;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: AlignedGridView.count(
         itemCount: servers.length,
-        crossAxisCount: 4,
+        crossAxisCount: crossAxisCount,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
         itemBuilder: (context, index) {

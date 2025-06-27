@@ -4,6 +4,7 @@ import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:path/path.dart' show basename;
 
 import '../video/video_page.dart';
@@ -43,10 +44,16 @@ class _HistoryPageState extends State<HistoryPage> {
               subtitle: Row(
                 children: [
                   tag(name),
+                  Text('$duration s'),
                   Text(path, style: const TextStyle(fontSize: 12)),
                 ].insertSizedBoxBetween(width: 4),
               ),
-              trailing: Text('$duration s'),
+              trailing: IconButton(
+                onPressed: () async {
+                  await controller.deleteHistory(his);
+                },
+                icon: const Icon(LucideIcons.trash),
+              ),
               onTap: () async {
                 var url = item.history.url;
                 var token = item.history.token;
