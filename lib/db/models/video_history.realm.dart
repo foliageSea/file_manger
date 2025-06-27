@@ -17,6 +17,7 @@ class VideoHistory extends _VideoHistory
     String url,
     String token,
     int duration,
+    int position,
     ObjectId serverId,
   ) {
     RealmObjectBase.set(this, 'id', id);
@@ -24,6 +25,7 @@ class VideoHistory extends _VideoHistory
     RealmObjectBase.set(this, 'url', url);
     RealmObjectBase.set(this, 'token', token);
     RealmObjectBase.set(this, 'duration', duration);
+    RealmObjectBase.set(this, 'position', position);
     RealmObjectBase.set(this, 'serverId', serverId);
   }
 
@@ -55,6 +57,11 @@ class VideoHistory extends _VideoHistory
   set duration(int value) => RealmObjectBase.set(this, 'duration', value);
 
   @override
+  int get position => RealmObjectBase.get<int>(this, 'position') as int;
+  @override
+  set position(int value) => RealmObjectBase.set(this, 'position', value);
+
+  @override
   ObjectId get serverId =>
       RealmObjectBase.get<ObjectId>(this, 'serverId') as ObjectId;
   @override
@@ -79,6 +86,7 @@ class VideoHistory extends _VideoHistory
       'url': url.toEJson(),
       'token': token.toEJson(),
       'duration': duration.toEJson(),
+      'position': position.toEJson(),
       'serverId': serverId.toEJson(),
     };
   }
@@ -93,6 +101,7 @@ class VideoHistory extends _VideoHistory
         'url': EJsonValue url,
         'token': EJsonValue token,
         'duration': EJsonValue duration,
+        'position': EJsonValue position,
         'serverId': EJsonValue serverId,
       } =>
         VideoHistory(
@@ -101,6 +110,7 @@ class VideoHistory extends _VideoHistory
           fromEJson(url),
           fromEJson(token),
           fromEJson(duration),
+          fromEJson(position),
           fromEJson(serverId),
         ),
       _ => raiseInvalidEJson(ejson),
@@ -120,6 +130,7 @@ class VideoHistory extends _VideoHistory
         SchemaProperty('url', RealmPropertyType.string),
         SchemaProperty('token', RealmPropertyType.string),
         SchemaProperty('duration', RealmPropertyType.int),
+        SchemaProperty('position', RealmPropertyType.int),
         SchemaProperty('serverId', RealmPropertyType.objectid),
       ],
     );

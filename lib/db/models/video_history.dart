@@ -10,5 +10,6 @@ class _VideoHistory {
   late String url;
   late String token;
   late int duration;
+  late int position;
   late ObjectId serverId;
 }

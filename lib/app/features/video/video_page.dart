@@ -41,10 +41,10 @@ class _VideoPageState extends State<VideoPage> {
     controller.setServer(widget.server);
     controller.setFileItem(widget.fileItem);
     controller.setVideoUrl(widget.url);
-    var progress = controller.getVideoProgress();
+    var position = controller.getVideoPosition();
 
     future = controller
-        .createVideoController(token: widget.token, offset: progress)
+        .createVideoController(token: widget.token, offset: position)
         .then((c) {
           controller.mediaPlayer = c;
         });

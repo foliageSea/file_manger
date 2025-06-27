@@ -6,6 +6,7 @@ import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
+import 'package:file_manger/app/widgets/custom_indicator.dart';
 import 'package:file_manger/app/widgets/horizontal_scroll_with_mouse.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
@@ -223,9 +224,13 @@ class _FilesPageState extends State<FilesPage> {
         (element) => element.path == file.path,
       );
       if (his != null) {
-        return Text(
-          '${calFileSize(file.size)} [已播放: ${formatDuration(his.duration)}]',
-          style: style,
+        var duration = his.duration;
+        var position = his.position;
+        return Row(
+          children: [
+            Text(calFileSize(file.size), style: style),
+            CustomIndicator(value: position / duration),
+          ].insertSizedBoxBetween(width: 8),
         );
       }
 

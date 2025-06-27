@@ -25,7 +25,6 @@ class VideoPageController extends GetxController with AppLogMixin {
   late Player mediaPlayer;
   late VideoController videoController;
   var videoUrl = '';
-  Timer? _progressTimer;
   final VideoHistoryService videoHistoryService = Global.getIt();
   String? token;
   ServerModel? server;
@@ -81,13 +80,13 @@ class VideoPageController extends GetxController with AppLogMixin {
     await mediaPlayer.setPlaylistMode(PlaylistMode.none);
 
     mediaPlayer.stream.duration.listen((event) {});
-    mediaPlayer.stream.position.listen(listenPosition);
+    mediaPlayer.stream.position.listen((event) {});
     mediaPlayer.stream.error.listen((event) {});
     if (superResolutionType.value != 1) {
       await setShader(superResolutionType.value);
     }
 
-    await mediaPlayer.setVolume(0);
+    // await mediaPlayer.setVolume(0);
 
     await mediaPlayer.open(
       Media(
@@ -99,19 +98,6 @@ class VideoPageController extends GetxController with AppLogMixin {
     );
 
     return mediaPlayer;
-  }
-
-  void listenPosition(Duration position) async {
-    if (_progressTimer == null || !_progressTimer!.isActive) {
-      _progressTimer = Timer(saveDuration, () async {
-        try {
-          await _saveVideoProgress(position.inSeconds);
-        } finally {
-          _progressTimer?.cancel();
-          _progressTimer = null;
-        }
-      });
-    }
   }
 
   Future<void> setShader(int type, {bool synchronized = true}) async {
@@ -153,12 +139,8 @@ class VideoPageController extends GetxController with AppLogMixin {
     log('关闭超分辨率');
   }
 
-  Future<void> _saveVideoProgress(int seconds) async {
+  Future<void> _saveVideoProgress(int position, int duration) async {
     try {
-      if (seconds == 0) {
-        return;
-      }
-
       var serverId = server?.id;
       var path = fileItem?.path;
 
@@ -177,31 +159,33 @@ class VideoPageController extends GetxController with AppLogMixin {
           item.path,
           item.url,
           item.token,
-          seconds,
+          duration,
+          position,
           item.serverId,
         );
         await videoHistoryService.updateHistory(history);
-        log('更新进度 $seconds');
+        log('更新进度 $position');
       } else {
         history = VideoHistory(
           ObjectId(),
           path,
           videoUrl,
           token!,
-          seconds,
+          duration,
+          position,
           serverId,
         );
         await videoHistoryService.addHistory(history);
-        log('新增进度 $seconds');
+        log('新增进度 $position');
       }
     } catch (_) {
       rethrow;
     }
   }
 
-  int getVideoProgress() {
+  int getVideoPosition() {
     var item = videoHistoryService.getHistoryByUrl(videoUrl);
-    return item?.duration ?? 0;
+    return item?.position ?? 0;
   }
 
   void refreshHistory() {
@@ -213,10 +197,16 @@ class VideoPageController extends GetxController with AppLogMixin {
     } catch (_) {}
   }
 
+  Future cachePosition() async {
+    var position = mediaPlayer.state.position.inSeconds;
+    var duration = mediaPlayer.state.duration.inSeconds;
+    await _saveVideoProgress(position, duration);
+  }
+
   @override
-  void onClose() {
-    mediaPlayer.dispose();
-    _progressTimer?.cancel();
+  void onClose() async {
+    await cachePosition();
+    await mediaPlayer.dispose();
     refreshHistory();
     super.onClose();
   }

@@ -1,8 +1,8 @@
 import 'package:core/core.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
-import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
+import 'package:file_manger/app/widgets/custom_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -35,22 +35,28 @@ class _HistoryPageState extends State<HistoryPage> {
             var server = item.server;
             var path = his.path;
             var fileName = basename(path);
-            var duration = his.duration;
+
             var name = server.name;
+            var position = his.position;
+            var duration = his.duration;
             return ListTile(
-              title: Text(
-                fileName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              title: Row(
+                children: [
+                  Text(
+                    fileName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  CustomIndicator(value: position / duration),
+                ].insertSizedBoxBetween(width: 8),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('已播放: ${formatDuration(duration)}'),
                   Row(
                     children: [
                       tag(name),
                       Text(path, style: const TextStyle(fontSize: 12)),
-                    ].insertSizedBoxBetween(width: 4),
+                    ].insertSizedBoxBetween(width: 8),
                   ),
                 ].insertSizedBoxBetween(height: 4),
               ),
