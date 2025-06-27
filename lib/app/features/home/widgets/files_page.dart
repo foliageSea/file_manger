@@ -218,6 +218,17 @@ class _FilesPageState extends State<FilesPage> {
     if (file.isDir == true) {
       return Text('目录', style: style);
     } else {
+      var histories = controller.histories;
+      final his = histories.firstWhereOrNull(
+        (element) => element.path == file.path,
+      );
+      if (his != null) {
+        return Text(
+          '${calFileSize(file.size)} [已播放: ${formatDuration(his.duration)}]',
+          style: style,
+        );
+      }
+
       return Text(calFileSize(file.size), style: style);
     }
   }

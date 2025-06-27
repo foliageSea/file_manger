@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
+import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,12 +42,17 @@ class _HistoryPageState extends State<HistoryPage> {
                 fileName,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Row(
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  tag(name),
-                  Text('$duration s'),
-                  Text(path, style: const TextStyle(fontSize: 12)),
-                ].insertSizedBoxBetween(width: 4),
+                  Text('已播放: ${formatDuration(duration)}'),
+                  Row(
+                    children: [
+                      tag(name),
+                      Text(path, style: const TextStyle(fontSize: 12)),
+                    ].insertSizedBoxBetween(width: 4),
+                  ),
+                ].insertSizedBoxBetween(height: 4),
               ),
               trailing: IconButton(
                 onPressed: () async {

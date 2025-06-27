@@ -13,3 +13,16 @@ String calFileSize(int? fileSize) {
 
   return '${displaySize.toStringAsFixed(unitIndex == 0 ? 0 : 1)} ${units[unitIndex]}';
 }
+
+// 新增格式化方法
+String formatDuration(int seconds) {
+  if (seconds < 60) {
+    return '$seconds秒';
+  } else if (seconds < 3600) {
+    return '${(seconds / 60).toStringAsFixed(1)}分钟';
+  } else {
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    return '$hours小时$minutes分钟';
+  }
+}

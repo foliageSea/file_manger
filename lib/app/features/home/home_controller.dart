@@ -6,8 +6,10 @@ import 'package:file_manger/app/features/video/video_page.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:file_manger/db/models/star_model.dart';
+import 'package:file_manger/db/models/video_history.dart';
 import 'package:file_manger/db/services/server_service.dart';
 import 'package:file_manger/db/services/star_service.dart';
+import 'package:file_manger/db/services/video_history_service.dart';
 import 'package:get/get.dart';
 import 'package:realm/realm.dart';
 
@@ -19,12 +21,14 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
   FileItem? currentFile;
   ServerService serverService = Global.getIt();
   StarService starService = Global.getIt();
+  VideoHistoryService videoHistoryService = Global.getIt();
   final servers = <ServerModel>[].obs;
 
   final Rx<SortBy> sortBy = SortBy.name.obs;
   final Rx<SortOrder> sortOrder = SortOrder.asc.obs;
 
   final stars = <StarModel>[].obs;
+  final histories = <VideoHistory>[].obs;
 
   Future initFileStorage(ServerModel server) async {
     fileStorage = WebDavFileStorage();
@@ -129,6 +133,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     await initFileStorage(server);
     future = readDir(FileItem()..path = path ?? '/', path);
     loadStarsByServerId();
+    loadHistoryByServerId();
   }
 
   void resetFilesPageState() {
@@ -206,6 +211,16 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     List<StarModel> list = stars.where((e) => e.serverId == serverId).toList();
     this.stars.value = list;
     this.stars.refresh();
+  }
+
+  void loadHistoryByServerId() {
+    var histories = videoHistoryService.getHistories();
+    var serverId = fileStorage.getServerId();
+    List<VideoHistory> list = histories
+        .where((e) => e.serverId == serverId)
+        .toList();
+    this.histories.value = list;
+    this.histories.refresh();
   }
 
   @override
