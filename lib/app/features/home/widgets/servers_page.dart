@@ -65,7 +65,7 @@ class _ServersPageState extends State<ServersPage> {
 
     var primaryColor = ThemeColorUtil.getPrimaryColor(context);
 
-    var crossAxisCount = MediaQuery.of(context).size.width > 768 ? 4 : 2;
+    var crossAxisCount = MediaQuery.of(context).size.width > 768 ? 2 : 1;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

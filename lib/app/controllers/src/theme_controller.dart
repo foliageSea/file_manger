@@ -82,7 +82,7 @@ class ThemeController extends GetxService with AppLogMixin {
       flexSchemeMap[e.name] = e;
     }
 
-    var defaultScheme = findKeyByValue(flexSchemeMap, FlexScheme.greenM3)!;
+    var defaultScheme = findKeyByValue(flexSchemeMap, FlexScheme.blueM3)!;
     var defaultThemeMode = findKeyByValue(themeModeMap, ThemeMode.dark)!;
 
     flexScheme.value = Storage()

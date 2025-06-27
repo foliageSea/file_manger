@@ -528,7 +528,13 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
       context,
     ).bottomButtonBar.map((e) => e).toList();
 
-    bottomButtonBar.addAll([Obx(() => _buildSuperResolution())]);
+    bottomButtonBar.addAll([
+      Obx(() => _buildSuperResolution()),
+      const SizedBox(width: 16),
+      _buildSubtitles(),
+      const SizedBox(width: 16),
+      _buildAudios(),
+    ]);
 
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -580,6 +586,80 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
         ];
       },
       child: Text(mode),
+    );
+  }
+
+  Widget _buildSubtitles() {
+    var controller = Get.find<VideoPageController>();
+    var subtitles = controller.subtitles;
+    var subtitleIndex = controller.subtitleIndex;
+
+    return PopupMenuButton(
+      tooltip: '字幕',
+      constraints: const BoxConstraints(minWidth: 200),
+      itemBuilder: (BuildContext context) {
+        return subtitles.map(((e) {
+          var index = subtitles.indexOf(e);
+          return PopupMenuItem(
+            value: index,
+            child: SizedBox(
+              height: kMinInteractiveDimension,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(e.language ?? e.id),
+                  index == subtitleIndex.value
+                      ? const Icon(Icons.check)
+                      : const SizedBox.shrink(),
+                ],
+              ),
+            ),
+            onTap: () async {
+              await controller.setSubtitleTrack(index);
+              subtitleIndex.value = index;
+              subtitleIndex.refresh();
+            },
+          );
+        })).toList();
+      },
+      child: const Text('字幕'),
+    );
+  }
+
+  Widget _buildAudios() {
+    var controller = Get.find<VideoPageController>();
+    var audios = controller.audios;
+    var audioIndex = controller.audioIndex;
+
+    return PopupMenuButton(
+      tooltip: '音轨',
+      constraints: const BoxConstraints(minWidth: 200),
+      itemBuilder: (BuildContext context) {
+        return audios.map(((e) {
+          var index = audios.indexOf(e);
+          return PopupMenuItem(
+            value: index,
+            child: SizedBox(
+              height: kMinInteractiveDimension,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(e.language ?? e.id),
+                  index == audioIndex.value
+                      ? const Icon(Icons.check)
+                      : const SizedBox.shrink(),
+                ],
+              ),
+            ),
+            onTap: () async {
+              await controller.setAudioTrack(index);
+              audioIndex.value = index;
+              audioIndex.refresh();
+            },
+          );
+        })).toList();
+      },
+      child: const Text('音轨'),
     );
   }
 }

@@ -31,6 +31,11 @@ class VideoPageController extends GetxController with AppLogMixin {
   FileItem? fileItem;
   Duration saveDuration = const Duration(seconds: 2);
 
+  final subtitles = <SubtitleTrack>[].obs;
+  final audios = <AudioTrack>[].obs;
+  final subtitleIndex = 0.obs;
+  final audioIndex = 0.obs;
+
   void setVideoUrl(String url) {
     videoUrl = url;
   }
@@ -82,6 +87,7 @@ class VideoPageController extends GetxController with AppLogMixin {
     mediaPlayer.stream.duration.listen((event) {});
     mediaPlayer.stream.position.listen((event) {});
     mediaPlayer.stream.error.listen((event) {});
+
     if (superResolutionType.value != 1) {
       await setShader(superResolutionType.value);
     }
@@ -97,7 +103,38 @@ class VideoPageController extends GetxController with AppLogMixin {
       play: autoPlay,
     );
 
+    mediaPlayer.stream.tracks.listen((event) {
+      if (audios.isEmpty && subtitles.isEmpty) {
+        getTracks();
+      }
+    });
+
+    // Future.delayed(const Duration(seconds: 5), () async {
+    //   await getTracks();
+    // });
+
     return mediaPlayer;
+  }
+
+  Future getTracks() async {
+    subtitles.value = mediaPlayer.state.tracks.subtitle;
+    subtitles.refresh();
+    audios.value = mediaPlayer.state.tracks.audio;
+    audios.refresh();
+  }
+
+  Future setSubtitleTrack(int index) async {
+    // 禁用所有字幕
+    // await mediaPlayer.setSubtitleTrack(SubtitleTrack.no());
+    // 启用第1个字幕轨道（索引从0开始）
+    await mediaPlayer.setSubtitleTrack(subtitles[index]);
+  }
+
+  Future setAudioTrack(int index) async {
+    // 禁用所有音轨（静音）
+    // await mediaPlayer.setAudioTrack(AudioTrack.no());
+    // 启用第1个音轨
+    await mediaPlayer.setAudioTrack(audios[index]);
   }
 
   Future<void> setShader(int type, {bool synchronized = true}) async {
