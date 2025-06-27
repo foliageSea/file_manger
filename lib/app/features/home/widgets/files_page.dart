@@ -215,10 +215,7 @@ class _FilesPageState extends State<FilesPage> {
   }
 
   Widget _buildSubtitle(FileItem file) {
-    var style = const TextStyle(fontSize: 12);
-    if (file.isDir == true) {
-      return Text('目录', style: style);
-    } else {
+    Widget buildProcess() {
       var histories = controller.histories;
       final his = histories.firstWhereOrNull(
         (element) => element.path == file.path,
@@ -226,15 +223,21 @@ class _FilesPageState extends State<FilesPage> {
       if (his != null) {
         var duration = his.duration;
         var position = his.position;
-        return Row(
-          children: [
-            Text(calFileSize(file.size), style: style),
-            CustomIndicator(value: position / duration),
-          ].insertSizedBoxBetween(width: 8),
-        );
+        return CustomIndicator(value: position / duration);
       }
+      return Container();
+    }
 
-      return Text(calFileSize(file.size), style: style);
+    var style = const TextStyle(fontSize: 12);
+    if (file.isDir == true) {
+      return Text('目录', style: style);
+    } else {
+      return Row(
+        children: [
+          Text(calFileSize(file.size), style: style),
+          Obx(() => buildProcess()),
+        ].insertSizedBoxBetween(width: 4),
+      );
     }
   }
 
