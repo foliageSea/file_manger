@@ -11,6 +11,20 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/widgets/video_controls_theme_data_injector.dart';
 
+Widget AdaptiveVideoControls(VideoState state) {
+  switch (Theme.of(state.context).platform) {
+    case TargetPlatform.android:
+    case TargetPlatform.iOS:
+      return MaterialVideoControls(state);
+    case TargetPlatform.macOS:
+    case TargetPlatform.windows:
+    case TargetPlatform.linux:
+      return getDesktopVideoControls(state);
+    default:
+      return NoVideoControls(state);
+  }
+}
+
 Widget getDesktopVideoControls(VideoState state) {
   return const VideoControlsThemeDataInjector(child: CustomVideoControls());
 }

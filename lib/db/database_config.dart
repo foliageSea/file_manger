@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:realm/realm.dart';
 import 'models/server_model.dart';
 import 'models/star_model.dart';
+import 'models/video_history.dart';
 
 class DatabaseConfig {
   static const schemaVersion = 3;
@@ -9,6 +10,7 @@ class DatabaseConfig {
   static List<SchemaObject> schemaObjects = [
     ServerModel.schema,
     StarModel.schema,
+    VideoHistory.schema,
   ];
 
   static Configuration get config => Configuration.local(

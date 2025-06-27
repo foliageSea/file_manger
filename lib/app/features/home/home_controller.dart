@@ -100,7 +100,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     history.refresh();
   }
 
-  Future openFile(FileItem file) async {
+  Future openFile(FileItem file, {ServerModel? server}) async {
     var url = await fileStorage.getUrl(file);
     var auth = fileStorage.getAuth();
 
@@ -108,7 +108,15 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
       if (file.name?.endsWith(element) == true) {
         log('打开视频文件 $url');
         log('令牌 $auth');
-        await Get.to(VideoPage(url: url, auth: auth, title: file.name));
+        await Get.to(
+          VideoPage(
+            url: url,
+            token: auth,
+            title: file.name,
+            server: server,
+            fileItem: file,
+          ),
+        );
         return;
       }
     }

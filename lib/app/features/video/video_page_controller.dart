@@ -1,27 +1,50 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:core/core.dart';
+import 'package:file_manger/app/common/global.dart';
 import 'package:file_manger/app/constants/constants.dart';
+import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/utils/shaders_util.dart';
+import 'package:file_manger/db/models/server_model.dart';
+import 'package:file_manger/db/models/video_history.dart';
+import 'package:file_manger/db/services/video_history_service.dart';
 import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:realm/realm.dart';
 
 class VideoPageController extends GetxController with AppLogMixin {
   var superResolutionType = 1.obs;
   var hAenable = true;
   var hardwareDecoder = 'auto-safe';
-  var autoPlay = true;
+  var autoPlay = false;
   var lowMemoryMode = false;
   late Player mediaPlayer;
   late VideoController videoController;
   var videoUrl = '';
+  Timer? _progressTimer;
+  final VideoHistoryService _videoHistoryService = Global.getIt();
+  String? token;
+  ServerModel? server;
+  FileItem? fileItem;
+  Duration saveDuration = const Duration(seconds: 2);
 
   void setVideoUrl(String url) {
     videoUrl = url;
   }
 
+  void setServer(ServerModel? server) {
+    this.server = server;
+  }
+
+  void setFileItem(FileItem? fileItem) {
+    this.fileItem = fileItem;
+  }
+
   Future<Player> createVideoController({int offset = 0, String? token}) async {
+    log('offset $offset');
+    this.token = token;
     mediaPlayer = Player(
       configuration: PlayerConfiguration(
         bufferSize: lowMemoryMode ? 15 * 1024 * 1024 : 1500 * 1024 * 1024,
@@ -55,6 +78,8 @@ class VideoPageController extends GetxController with AppLogMixin {
     );
     await mediaPlayer.setPlaylistMode(PlaylistMode.none);
 
+    mediaPlayer.stream.duration.listen((event) {});
+    mediaPlayer.stream.position.listen(listenPosition);
     mediaPlayer.stream.error.listen((event) {});
     if (superResolutionType.value != 1) {
       await setShader(superResolutionType.value);
@@ -72,6 +97,19 @@ class VideoPageController extends GetxController with AppLogMixin {
     );
 
     return mediaPlayer;
+  }
+
+  void listenPosition(Duration position) async {
+    if (_progressTimer == null || !_progressTimer!.isActive) {
+      _progressTimer = Timer(saveDuration, () async {
+        try {
+          await _saveVideoProgress(position.inSeconds);
+        } finally {
+          _progressTimer?.cancel();
+          _progressTimer = null;
+        }
+      });
+    }
   }
 
   Future<void> setShader(int type, {bool synchronized = true}) async {
@@ -113,9 +151,57 @@ class VideoPageController extends GetxController with AppLogMixin {
     log('关闭超分辨率');
   }
 
+  Future<void> _saveVideoProgress(int seconds) async {
+    try {
+      var serverId = server?.id;
+      var path = fileItem?.path;
+
+      if (serverId == null || path == null || token == null) {
+        warning('跳过保存进度');
+        return;
+      }
+
+      late VideoHistory history;
+
+      var item = _videoHistoryService.getHistoryByUrl(videoUrl);
+
+      if (item != null) {
+        history = VideoHistory(
+          item.id,
+          item.path,
+          item.url,
+          item.token,
+          seconds,
+          item.serverId,
+        );
+        await _videoHistoryService.updateHistory(history);
+        log('更新进度 $seconds');
+      } else {
+        history = VideoHistory(
+          ObjectId(),
+          path,
+          videoUrl,
+          token!,
+          seconds,
+          serverId,
+        );
+        await _videoHistoryService.addHistory(history);
+        log('新增进度 $seconds');
+      }
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  int getVideoProgress() {
+    var item = _videoHistoryService.getHistoryByUrl(videoUrl);
+    return item?.duration ?? 0;
+  }
+
   @override
   void onClose() {
     mediaPlayer.dispose();
+    _progressTimer?.cancel();
     super.onClose();
   }
 }

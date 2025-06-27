@@ -149,7 +149,7 @@ class _FilesPageState extends State<FilesPage> {
               return;
             }
 
-            await controller.openFile(file);
+            await controller.openFile(file, server: widget.serverModel);
           },
         );
       },
