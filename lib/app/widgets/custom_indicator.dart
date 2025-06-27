@@ -1,4 +1,3 @@
-import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:flutter/material.dart';
 
 class CustomIndicator extends StatelessWidget {
@@ -8,17 +7,6 @@ class CustomIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 10,
-      height: 10,
-      child: CircularProgressIndicator(
-        value: value,
-        backgroundColor: Colors.grey[300],
-        valueColor: AlwaysStoppedAnimation<Color>(
-          ThemeColorUtil.getPrimaryColor(context),
-        ),
-        strokeWidth: 3.0,
-      ),
-    );
+    return Text('[已播放: ${(value * 100).toStringAsFixed(0)}%]');
   }
 }
