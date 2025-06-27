@@ -1,4 +1,6 @@
 import 'package:file_manger/db/database.dart';
+import 'package:file_manger/db/models/server_model.dart';
+import 'package:file_manger/db/repositories/server_repository.dart';
 import 'package:get/get.dart';
 import 'package:realm/realm.dart';
 
@@ -19,4 +21,13 @@ abstract class VideoHistoryService {
   VideoHistory? getHistoryById(ObjectId id);
 
   VideoHistory? getHistoryByUrl(String url);
+
+  List<VideoHistoryItem> getHistoryItems();
+}
+
+class VideoHistoryItem {
+  late VideoHistory history;
+  late ServerModel server;
+
+  VideoHistoryItem(this.history, this.server);
 }

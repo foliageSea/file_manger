@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/features/history/history_page.dart';
 import 'package:file_manger/app/features/star/star_page.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
@@ -29,12 +30,6 @@ class _ServersPageState extends State<ServersPage> {
       actions: [
         IconButton(
           onPressed: () async {
-            await Get.to(const StarPage());
-          },
-          icon: const Icon(Icons.star_border),
-        ),
-        IconButton(
-          onPressed: () async {
             await showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -43,6 +38,18 @@ class _ServersPageState extends State<ServersPage> {
             );
           },
           icon: const Icon(Icons.add),
+        ),
+        IconButton(
+          onPressed: () async {
+            await Get.to(const StarPage());
+          },
+          icon: const Icon(Icons.star_border),
+        ),
+        IconButton(
+          onPressed: () async {
+            await Get.to(const HistoryPage());
+          },
+          icon: const Icon(Icons.history),
         ),
       ],
       child: Obx(() => _buildServers()),

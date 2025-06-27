@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:core/core.dart';
 import 'package:file_manger/app/common/global.dart';
 import 'package:file_manger/app/constants/constants.dart';
+import 'package:file_manger/app/features/history/history_page_controller.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/utils/shaders_util.dart';
 import 'package:file_manger/db/models/server_model.dart';
@@ -24,7 +25,7 @@ class VideoPageController extends GetxController with AppLogMixin {
   late VideoController videoController;
   var videoUrl = '';
   Timer? _progressTimer;
-  final VideoHistoryService _videoHistoryService = Global.getIt();
+  final VideoHistoryService videoHistoryService = Global.getIt();
   String? token;
   ServerModel? server;
   FileItem? fileItem;
@@ -153,6 +154,10 @@ class VideoPageController extends GetxController with AppLogMixin {
 
   Future<void> _saveVideoProgress(int seconds) async {
     try {
+      if (seconds == 0) {
+        return;
+      }
+
       var serverId = server?.id;
       var path = fileItem?.path;
 
@@ -163,7 +168,7 @@ class VideoPageController extends GetxController with AppLogMixin {
 
       late VideoHistory history;
 
-      var item = _videoHistoryService.getHistoryByUrl(videoUrl);
+      var item = videoHistoryService.getHistoryByUrl(videoUrl);
 
       if (item != null) {
         history = VideoHistory(
@@ -174,7 +179,7 @@ class VideoPageController extends GetxController with AppLogMixin {
           seconds,
           item.serverId,
         );
-        await _videoHistoryService.updateHistory(history);
+        await videoHistoryService.updateHistory(history);
         log('更新进度 $seconds');
       } else {
         history = VideoHistory(
@@ -185,7 +190,7 @@ class VideoPageController extends GetxController with AppLogMixin {
           seconds,
           serverId,
         );
-        await _videoHistoryService.addHistory(history);
+        await videoHistoryService.addHistory(history);
         log('新增进度 $seconds');
       }
     } catch (_) {
@@ -194,7 +199,7 @@ class VideoPageController extends GetxController with AppLogMixin {
   }
 
   int getVideoProgress() {
-    var item = _videoHistoryService.getHistoryByUrl(videoUrl);
+    var item = videoHistoryService.getHistoryByUrl(videoUrl);
     return item?.duration ?? 0;
   }
 
@@ -203,5 +208,9 @@ class VideoPageController extends GetxController with AppLogMixin {
     mediaPlayer.dispose();
     _progressTimer?.cancel();
     super.onClose();
+
+    try {
+      Get.find<HistoryPageController>().getHistory();
+    } catch (_) {}
   }
 }

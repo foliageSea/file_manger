@@ -4,9 +4,11 @@ class VideoHistoryServiceImpl
     with AppDatabaseMixin
     implements VideoHistoryService {
   late VideoHistoryRepository videoHistoryRepository;
+  late ServerRepository serverRepository;
 
   VideoHistoryServiceImpl() {
     videoHistoryRepository = VideoHistoryRepository(db);
+    serverRepository = ServerRepository(db);
   }
 
   @override
@@ -41,5 +43,16 @@ class VideoHistoryServiceImpl
     return videoHistoryRepository.getHistories().firstWhereOrNull(
       (element) => element.url == url,
     );
+  }
+
+  @override
+  List<VideoHistoryItem> getHistoryItems() {
+    return videoHistoryRepository
+        .getHistories()
+        .map(
+          (e) =>
+              VideoHistoryItem(e, serverRepository.getServerById(e.serverId)!),
+        )
+        .toList();
   }
 }
