@@ -47,12 +47,14 @@ class VideoHistoryServiceImpl
 
   @override
   List<VideoHistoryItem> getHistoryItems() {
-    return videoHistoryRepository
+    var list = videoHistoryRepository
         .getHistories()
         .map(
           (e) =>
               VideoHistoryItem(e, serverRepository.getServerById(e.serverId)!),
         )
         .toList();
+    list.sort((a, b) => b.history.updatedTime.compareTo(a.history.updatedTime));
+    return list;
   }
 }

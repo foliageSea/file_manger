@@ -19,6 +19,8 @@ class VideoHistory extends _VideoHistory
     int duration,
     int position,
     ObjectId serverId,
+    DateTime createdTime,
+    DateTime updatedTime,
   ) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'path', path);
@@ -27,6 +29,8 @@ class VideoHistory extends _VideoHistory
     RealmObjectBase.set(this, 'duration', duration);
     RealmObjectBase.set(this, 'position', position);
     RealmObjectBase.set(this, 'serverId', serverId);
+    RealmObjectBase.set(this, 'createdTime', createdTime);
+    RealmObjectBase.set(this, 'updatedTime', updatedTime);
   }
 
   VideoHistory._();
@@ -68,6 +72,20 @@ class VideoHistory extends _VideoHistory
   set serverId(ObjectId value) => RealmObjectBase.set(this, 'serverId', value);
 
   @override
+  DateTime get createdTime =>
+      RealmObjectBase.get<DateTime>(this, 'createdTime') as DateTime;
+  @override
+  set createdTime(DateTime value) =>
+      RealmObjectBase.set(this, 'createdTime', value);
+
+  @override
+  DateTime get updatedTime =>
+      RealmObjectBase.get<DateTime>(this, 'updatedTime') as DateTime;
+  @override
+  set updatedTime(DateTime value) =>
+      RealmObjectBase.set(this, 'updatedTime', value);
+
+  @override
   Stream<RealmObjectChanges<VideoHistory>> get changes =>
       RealmObjectBase.getChanges<VideoHistory>(this);
 
@@ -88,6 +106,8 @@ class VideoHistory extends _VideoHistory
       'duration': duration.toEJson(),
       'position': position.toEJson(),
       'serverId': serverId.toEJson(),
+      'createdTime': createdTime.toEJson(),
+      'updatedTime': updatedTime.toEJson(),
     };
   }
 
@@ -103,6 +123,8 @@ class VideoHistory extends _VideoHistory
         'duration': EJsonValue duration,
         'position': EJsonValue position,
         'serverId': EJsonValue serverId,
+        'createdTime': EJsonValue createdTime,
+        'updatedTime': EJsonValue updatedTime,
       } =>
         VideoHistory(
           fromEJson(id),
@@ -112,6 +134,8 @@ class VideoHistory extends _VideoHistory
           fromEJson(duration),
           fromEJson(position),
           fromEJson(serverId),
+          fromEJson(createdTime),
+          fromEJson(updatedTime),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -132,6 +156,8 @@ class VideoHistory extends _VideoHistory
         SchemaProperty('duration', RealmPropertyType.int),
         SchemaProperty('position', RealmPropertyType.int),
         SchemaProperty('serverId', RealmPropertyType.objectid),
+        SchemaProperty('createdTime', RealmPropertyType.timestamp),
+        SchemaProperty('updatedTime', RealmPropertyType.timestamp),
       ],
     );
   }();

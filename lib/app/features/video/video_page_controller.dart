@@ -191,6 +191,7 @@ class VideoPageController extends GetxController with AppLogMixin {
       var item = videoHistoryService.getHistoryByUrl(videoUrl);
 
       if (item != null) {
+        DateTime updatedTime = DateTime.now();
         history = VideoHistory(
           item.id,
           item.path,
@@ -199,10 +200,13 @@ class VideoPageController extends GetxController with AppLogMixin {
           duration,
           position,
           item.serverId,
+          item.createdTime,
+          updatedTime,
         );
         await videoHistoryService.updateHistory(history);
         log('更新进度 $position');
       } else {
+        DateTime createdTime = DateTime.now();
         history = VideoHistory(
           ObjectId(),
           path,
@@ -211,6 +215,8 @@ class VideoPageController extends GetxController with AppLogMixin {
           duration,
           position,
           serverId,
+          createdTime,
+          createdTime,
         );
         await videoHistoryService.addHistory(history);
         log('新增进度 $position');

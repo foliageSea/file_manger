@@ -12,4 +12,6 @@ class _VideoHistory {
   late int duration;
   late int position;
   late ObjectId serverId;
+  late DateTime createdTime;
+  late DateTime updatedTime;
 }
