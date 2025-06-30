@@ -221,8 +221,8 @@ class VideoPageController extends GetxController with AppLogMixin {
         await videoHistoryService.addHistory(history);
         log('新增进度 $position');
       }
-    } catch (_) {
-      rethrow;
+    } catch (e, st) {
+      handle(e, st);
     }
   }
 
