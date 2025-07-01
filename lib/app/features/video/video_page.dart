@@ -71,6 +71,18 @@ class _VideoPageState extends State<VideoPage> {
               child: Video(
                 controller: videoController,
                 controls: AdaptiveVideoControls,
+                filterQuality: FilterQuality.high,
+                subtitleViewConfiguration: const SubtitleViewConfiguration(
+                  style: TextStyle(
+                    height: 1.4,
+                    fontSize: 56.0,
+                    letterSpacing: 0.0,
+                    wordSpacing: 0.0,
+                    color: Color(0xffffffff),
+                    fontWeight: FontWeight.normal,
+                    backgroundColor: Color(0xaa000000),
+                  ),
+                ),
               ),
             );
           },
