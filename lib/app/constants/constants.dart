@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const supportVideoExtensions = [
   '.mp4',
   '.avi',
@@ -46,3 +48,5 @@ abstract class SuperResolutionType {
   static const int lite = 2;
   static const int full = 3;
 }
+
+const kSubTitleStyle = TextStyle(fontSize: 12);

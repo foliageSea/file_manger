@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/constants/constants.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
@@ -56,7 +57,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      EllipsisText(path, style: const TextStyle(fontSize: 12)),
+                      EllipsisText(path, style: kSubTitleStyle),
                       tag(name),
                     ].insertSizedBoxBetween(height: 4),
                   ),

@@ -229,7 +229,7 @@ class _FilesPageState extends State<FilesPage> {
       return Container();
     }
 
-    var style = const TextStyle(fontSize: 12);
+    var style = kSubTitleStyle;
     if (file.isDir == true) {
       return Text('目录', style: style);
     } else {

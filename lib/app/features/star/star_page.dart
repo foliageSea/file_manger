@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/constants/constants.dart';
 import 'package:file_manger/app/features/star/star_controller.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
@@ -70,7 +71,7 @@ class _StarPageState extends State<StarPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EllipsisText(path),
+        EllipsisText(path, style: kSubTitleStyle),
         tag(name),
       ].insertSizedBoxBetween(height: 4),
     );
