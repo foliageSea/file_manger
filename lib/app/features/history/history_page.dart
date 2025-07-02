@@ -3,6 +3,7 @@ import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:file_manger/app/widgets/custom_indicator.dart';
+import 'package:file_manger/app/widgets/ellipsis_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -52,11 +53,12 @@ class _HistoryPageState extends State<HistoryPage> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      EllipsisText(path, style: const TextStyle(fontSize: 12)),
                       tag(name),
-                      Text(path, style: const TextStyle(fontSize: 12)),
-                    ].insertSizedBoxBetween(width: 8),
+                    ].insertSizedBoxBetween(height: 4),
                   ),
                 ].insertSizedBoxBetween(height: 4),
               ),

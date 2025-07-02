@@ -7,6 +7,7 @@ import 'package:file_manger/app/utils/common_utils.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
 import 'package:file_manger/app/widgets/custom_indicator.dart';
+import 'package:file_manger/app/widgets/ellipsis_text.dart';
 import 'package:file_manger/app/widgets/horizontal_scroll_with_mouse.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:flutter/material.dart';
@@ -141,7 +142,7 @@ class _FilesPageState extends State<FilesPage> {
         return ListTile(
           leading: FileIconGenerator.getIcon(file.name!, file.isDir ?? false),
           trailing: _buildActions(file),
-          title: Text('${file.name}'),
+          title: EllipsisText('${file.name}'),
           subtitle: _buildSubtitle(file),
           onTap: () async {
             if (file.isDir == true) {

@@ -3,6 +3,7 @@ import 'package:file_manger/app/features/star/star_controller.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
 import 'package:file_manger/app/utils/theme_color_util.dart';
+import 'package:file_manger/app/widgets/ellipsis_text.dart';
 import 'package:file_manger/db/services/star_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,7 +46,7 @@ class _StarPageState extends State<StarPage> {
                 var path = item.star.path;
                 Get.to(FilesPage(serverModel: server, path: path));
               },
-              title: Text(
+              title: EllipsisText(
                 item.star.name,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -66,8 +67,12 @@ class _StarPageState extends State<StarPage> {
   Widget _buildSubTitle(StarFullItem item) {
     var name = item.server.name;
     var path = item.star.path;
-    return Row(
-      children: [tag(name), tag(path)].insertSizedBoxBetween(width: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        EllipsisText(path),
+        tag(name),
+      ].insertSizedBoxBetween(height: 4),
     );
   }
 
