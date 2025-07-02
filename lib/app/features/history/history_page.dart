@@ -43,7 +43,7 @@ class _HistoryPageState extends State<HistoryPage> {
             return ListTile(
               title: Row(
                 children: [
-                  Text(
+                  EllipsisText(
                     fileName,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
