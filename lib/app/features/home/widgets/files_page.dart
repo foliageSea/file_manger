@@ -57,6 +57,13 @@ class _FilesPageState extends State<FilesPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        var history = controller.history;
+
+        if (history.length > 1) {
+          await controller.jumpToDir(history.length - 2);
+          return false;
+        }
+
         var result = await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -80,6 +87,14 @@ class _FilesPageState extends State<FilesPage> {
       },
       child: BaseLayout(
         title: widget.serverModel.name,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(Icons.home),
+          ),
+        ],
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

@@ -44,9 +44,11 @@ class _HistoryPageState extends State<HistoryPage> {
             return ListTile(
               title: Row(
                 children: [
-                  EllipsisText(
-                    fileName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Flexible(
+                    child: EllipsisText(
+                      fileName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   CustomIndicator(value: position / duration),
                 ].insertSizedBoxBetween(width: 8),
