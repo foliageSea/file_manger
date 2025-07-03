@@ -1,21 +1,20 @@
 import 'dart:async';
 
-import 'package:core/core.dart';
-import 'package:file_manger/app/constants/constants.dart';
-import 'package:file_manger/app/features/video/video_page_controller.dart';
+import 'package:file_manger/app/features/video/widgets/common_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/widgets/video_controls_theme_data_injector.dart';
 
-Widget AdaptiveVideoControls(VideoState state) {
+import 'material.dart';
+
+Widget getAdaptiveVideoControls(VideoState state) {
   switch (Theme.of(state.context).platform) {
     case TargetPlatform.android:
     case TargetPlatform.iOS:
-      return MaterialVideoControls(state);
+      return getMaterialVideoControls(state);
     case TargetPlatform.macOS:
     case TargetPlatform.windows:
     case TargetPlatform.linux:
@@ -447,7 +446,16 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
                                         margin: _theme(
                                           context,
                                         ).bottomButtonBarMargin,
-                                        child: _buildBottomButtonBar(context),
+                                        child: () {
+                                          List<Widget> bottomButtonBar =
+                                              _theme(context).bottomButtonBar
+                                                  .map((e) => e)
+                                                  .toList();
+                                          return CommonControls.buildBottomButtonBar(
+                                            context,
+                                            bottomButtonBar,
+                                          );
+                                        }(),
                                       ),
                                   ],
                                 ),
@@ -520,146 +528,6 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
           ),
         ),
       ),
-    );
-  }
-
-  Row _buildBottomButtonBar(BuildContext context) {
-    List<Widget> bottomButtonBar = _theme(
-      context,
-    ).bottomButtonBar.map((e) => e).toList();
-
-    bottomButtonBar.addAll([
-      Obx(() => _buildSuperResolution()),
-      const SizedBox(width: 16),
-      _buildSubtitles(),
-      const SizedBox(width: 16),
-      _buildAudios(),
-    ]);
-
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: bottomButtonBar,
-    );
-  }
-
-  Widget _buildSuperResolution() {
-    var controller = Get.find<VideoPageController>();
-
-    var superResolutionType = controller.superResolutionType;
-    var mode = '';
-    if (superResolutionType.value == SuperResolutionType.off) {
-      mode = '开启超分';
-    } else if (superResolutionType.value == SuperResolutionType.lite) {
-      mode = '效率模式';
-    } else if (superResolutionType.value == SuperResolutionType.full) {
-      mode = '质量模式';
-    }
-
-    return PopupMenuButton(
-      tooltip: '超分',
-      constraints: const BoxConstraints(minWidth: 200),
-      itemBuilder: (BuildContext context) {
-        return [
-          PopupMenuItem(
-            child: const Text('关闭超分'),
-            onTap: () {
-              controller.setShader(SuperResolutionType.off);
-              AppMessage().showToast('关闭超分');
-            },
-          ),
-          PopupMenuItem(
-            child: const Text('效率模式'),
-            onTap: () {
-              controller.setShader(SuperResolutionType.lite);
-              AppMessage().showToast('效率模式');
-            },
-          ),
-          PopupMenuItem(
-            child: const Text('质量模式'),
-            onTap: () {
-              controller.setShader(SuperResolutionType.full);
-              AppMessage().showToast('质量模式');
-            },
-          ),
-        ];
-      },
-      child: Text(mode),
-    );
-  }
-
-  Widget _buildSubtitles() {
-    var controller = Get.find<VideoPageController>();
-    var subtitles = controller.subtitles;
-    var subtitleIndex = controller.subtitleIndex;
-
-    return PopupMenuButton(
-      tooltip: '字幕',
-      constraints: const BoxConstraints(minWidth: 200),
-      itemBuilder: (BuildContext context) {
-        return subtitles.map(((e) {
-          var index = subtitles.indexOf(e);
-          return PopupMenuItem(
-            value: index,
-            child: SizedBox(
-              height: kMinInteractiveDimension,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(e.language ?? e.id),
-                  index == subtitleIndex.value
-                      ? const Icon(Icons.check)
-                      : const SizedBox.shrink(),
-                ],
-              ),
-            ),
-            onTap: () async {
-              await controller.setSubtitleTrack(index);
-              subtitleIndex.value = index;
-              subtitleIndex.refresh();
-            },
-          );
-        })).toList();
-      },
-      child: const Text('字幕'),
-    );
-  }
-
-  Widget _buildAudios() {
-    var controller = Get.find<VideoPageController>();
-    var audios = controller.audios;
-    var audioIndex = controller.audioIndex;
-
-    return PopupMenuButton(
-      tooltip: '音轨',
-      constraints: const BoxConstraints(minWidth: 200),
-      itemBuilder: (BuildContext context) {
-        return audios.map(((e) {
-          var index = audios.indexOf(e);
-          return PopupMenuItem(
-            value: index,
-            child: SizedBox(
-              height: kMinInteractiveDimension,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(e.language ?? e.id),
-                  index == audioIndex.value
-                      ? const Icon(Icons.check)
-                      : const SizedBox.shrink(),
-                ],
-              ),
-            ),
-            onTap: () async {
-              await controller.setAudioTrack(index);
-              audioIndex.value = index;
-              audioIndex.refresh();
-            },
-          );
-        })).toList();
-      },
-      child: const Text('音轨'),
     );
   }
 }
