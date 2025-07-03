@@ -10,7 +10,8 @@ abstract class CommonControls {
     BuildContext context,
     List<Widget> bottomButtonBar,
   ) {
-    bottomButtonBar.addAll([
+    var list = bottomButtonBar.map((e) => e).toList();
+    list.addAll([
       Obx(() => _buildSuperResolution()),
       const SizedBox(width: 16),
       _buildSubtitles(),
@@ -22,7 +23,7 @@ abstract class CommonControls {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: bottomButtonBar,
+      children: list,
     );
   }
 
