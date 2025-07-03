@@ -322,7 +322,7 @@ class MaterialVideoControlsThemeData {
       right: 16.0,
       bottom: 52.0,
     ),
-    this.seekBarHeight = 10,
+    this.seekBarHeight = 2.4,
     this.seekBarContainerHeight = 36.0,
     this.seekBarColor = const Color(0x3DFFFFFF),
     this.seekBarPositionColor = const Color(0xFFFF0000),
