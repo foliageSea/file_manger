@@ -7,7 +7,7 @@ import 'package:media_kit_video/media_kit_video.dart'
     hide AdaptiveVideoControls;
 
 import 'video_page_controller.dart';
-import 'widgets/controls.dart';
+import 'widgets/material_desk.dart';
 
 class VideoPage extends StatefulWidget {
   final String url;
@@ -70,7 +70,7 @@ class _VideoPageState extends State<VideoPage> {
               height: MediaQuery.of(context).size.width * 9.0 / 16.0,
               child: Video(
                 controller: videoController,
-                controls: AdaptiveVideoControls,
+                controls: getAdaptiveVideoControls,
                 filterQuality: FilterQuality.high,
                 subtitleViewConfiguration: const SubtitleViewConfiguration(
                   style: TextStyle(
