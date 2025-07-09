@@ -109,7 +109,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
     var auth = fileStorage.getAuth();
 
     for (var element in supportVideoExtensions) {
-      if (file.name?.endsWith(element) == true) {
+      if (file.name?.toLowerCase().endsWith(element) == true) {
         log('打开视频文件 $url');
         log('令牌 $auth');
         await Get.to(

@@ -33,6 +33,7 @@ dependencies:
   media_kit: any
   media_kit_video: any
   media_kit_libs_video: any
+  rxdart: ^0.28.0
 
 dependency_overrides:
   core:

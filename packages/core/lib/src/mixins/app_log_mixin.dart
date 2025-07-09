@@ -6,10 +6,8 @@ mixin AppLogMixin {
   void warning(dynamic message) => AppLogger().warning(message);
   void handle(Object exception, [StackTrace? stackTrace, dynamic msg]) =>
       AppLogger().handle(exception, stackTrace, msg);
-  void error(
-    dynamic msg, [
-    Object? exception,
-    StackTrace? stackTrace,
-  ]) =>
+  void error(dynamic msg, [Object? exception, StackTrace? stackTrace]) =>
       AppLogger().error(msg, exception, stackTrace);
+
+  AppLogger logger = AppLogger();
 }

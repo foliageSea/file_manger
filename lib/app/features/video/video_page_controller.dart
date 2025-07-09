@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:realm/realm.dart';
+import 'package:rxdart/rxdart.dart';
 
 class VideoPageController extends GetxController with AppLogMixin {
   var superResolutionType = 1.obs;
@@ -29,7 +30,7 @@ class VideoPageController extends GetxController with AppLogMixin {
   String? token;
   ServerModel? server;
   FileItem? fileItem;
-  Duration saveDuration = const Duration(seconds: 2);
+  Duration cacheDuration = const Duration(seconds: 2);
 
   final subtitles = <SubtitleTrack>[].obs;
   final audios = <AudioTrack>[].obs;
@@ -84,11 +85,20 @@ class VideoPageController extends GetxController with AppLogMixin {
     );
     await mediaPlayer.setPlaylistMode(PlaylistMode.none);
 
-    mediaPlayer.stream.duration.listen((event) {});
-    mediaPlayer.stream.position.listen((event) {});
-    mediaPlayer.stream.error.listen((event) {});
+    // mediaPlayer.stream.duration.listen((event) {});
+    // mediaPlayer.stream.position.listen((event) {});
+    mediaPlayer.stream.error.listen((error) {
+      this.error(error);
+    });
 
-    if (superResolutionType.value != 1) {
+    Stream<Duration> throttlePosition = mediaPlayer.stream.position
+        .throttleTime(cacheDuration);
+
+    throttlePosition.listen((position) async {
+      await cachePosition();
+    });
+
+    if (superResolutionType.value != SuperResolutionType.off) {
       await setShader(superResolutionType.value);
     }
 
@@ -108,10 +118,6 @@ class VideoPageController extends GetxController with AppLogMixin {
         getTracks();
       }
     });
-
-    // Future.delayed(const Duration(seconds: 5), () async {
-    //   await getTracks();
-    // });
 
     return mediaPlayer;
   }
@@ -204,7 +210,7 @@ class VideoPageController extends GetxController with AppLogMixin {
           updatedTime,
         );
         await videoHistoryService.updateHistory(history);
-        log('更新进度 $position');
+        log('更新进度 $position s');
       } else {
         DateTime createdTime = DateTime.now();
         history = VideoHistory(
@@ -251,6 +257,7 @@ class VideoPageController extends GetxController with AppLogMixin {
     await cachePosition();
     await mediaPlayer.dispose();
     refreshHistory();
+    logger.info('注销视频播放器');
     super.onClose();
   }
 }
