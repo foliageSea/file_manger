@@ -29,6 +29,7 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 
   final stars = <StarModel>[].obs;
   final histories = <VideoHistory>[].obs;
+  CustomCancelToken? cancelToken;
 
   Future initFileStorage(ServerModel server) async {
     fileStorage = WebDavFileStorage();
@@ -38,14 +39,16 @@ class HomeController extends GetxController with AppMessageMixin, AppLogMixin {
 
   Future<List<FileItem>> readDir(FileItem file, [String? path]) async {
     try {
+      cancelToken?.cancel();
+      cancelToken = CustomCancelToken();
       currentFile = file;
-      var dirs = await fileStorage.readDir(file);
+      var dirs = await fileStorage.readDir(file, cancelToken);
       dirs = filterFiles(dirs);
       files.value = dirs;
       files.refresh();
 
       handlePushHistory(file, path);
-
+      cancelToken = null;
       log('加载目录 ${file.path}');
     } on Exception catch (e, st) {
       handle(e, st);

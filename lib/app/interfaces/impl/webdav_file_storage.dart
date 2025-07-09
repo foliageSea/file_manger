@@ -16,8 +16,11 @@ class WebDavFileStorage extends FileStorage {
   }
 
   @override
-  Future<List<FileItem>> readDir(FileItem file) async {
-    var list = await client.readDir(file.path!);
+  Future<List<FileItem>> readDir(
+    FileItem file, [
+    CustomCancelToken? cancelToken,
+  ]) async {
+    var list = await client.readDir(file.path!, cancelToken);
 
     var files = list
         .map(

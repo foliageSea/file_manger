@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:core/core.dart';
 import 'package:dartx/dartx.dart';
 import 'package:file_manger/db/models/server_model.dart';
 import 'package:realm/realm.dart';
@@ -10,7 +11,10 @@ part 'impl/webdav_file_storage.dart';
 abstract class FileStorage {
   Future init(ServerModel server);
 
-  Future<List<FileItem>> readDir(FileItem file);
+  Future<List<FileItem>> readDir(
+    FileItem file, [
+    CustomCancelToken? cancelToken,
+  ]);
 
   Future<String> getUrl(FileItem file);
 

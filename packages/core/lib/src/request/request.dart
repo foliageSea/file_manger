@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'interceptors/dio_auth_interceptor.dart';
 import 'interceptors/dio_error_interceptor.dart';
 
+typedef CustomCancelToken = CancelToken;
+
 abstract class Requestable extends CommonInitialize {
   void setBaseUrl(String baseUrl);
 
@@ -13,10 +15,7 @@ abstract class Requestable extends CommonInitialize {
     Map<String, dynamic>? queryParameters,
   });
 
-  Future<Response<T>> post<T>(
-    String path, {
-    Map<String, dynamic>? data,
-  });
+  Future<Response<T>> post<T>(String path, {Map<String, dynamic>? data});
 }
 
 class Request implements Requestable {
@@ -61,10 +60,7 @@ class Request implements Requestable {
   }
 
   @override
-  Future<Response<T>> post<T>(
-    String path, {
-    Map<String, dynamic>? data,
-  }) {
+  Future<Response<T>> post<T>(String path, {Map<String, dynamic>? data}) {
     return _dio.post<T>(path, data: data);
   }
 

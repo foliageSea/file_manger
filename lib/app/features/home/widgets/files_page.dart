@@ -41,6 +41,7 @@ class _FilesPageState extends State<FilesPage> {
   @override
   void dispose() {
     scrollController.dispose();
+    controller.cancelToken?.cancel();
     super.dispose();
   }
 
