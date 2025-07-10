@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:core/core.dart';
 import 'package:file_manger/app/common/global.dart';
 import 'package:file_manger/app/constants/constants.dart';
+import 'package:file_manger/app/features/files/files_controller.dart';
 import 'package:file_manger/app/features/history/history_page_controller.dart';
-import 'package:file_manger/app/features/home/home_controller.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/utils/shaders_util.dart';
 import 'package:file_manger/db/models/server_model.dart';
@@ -242,7 +242,7 @@ class VideoPageController extends GetxController with AppLogMixin {
       Get.find<HistoryPageController>().getHistory();
     } catch (_) {}
     try {
-      Get.find<HomeController>().loadHistoryByServerId();
+      Get.find<FilesController>().loadHistoryByServerId();
     } catch (_) {}
   }
 

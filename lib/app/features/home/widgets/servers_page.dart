@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:file_manger/app/features/files/files_page.dart';
 import 'package:file_manger/app/features/history/history_page.dart';
 import 'package:file_manger/app/features/star/star_page.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
@@ -11,7 +12,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../home_controller.dart';
 import 'actions_dialog.dart';
 import 'add_dialog.dart';
-import 'files_page.dart';
 
 class ServersPage extends StatefulWidget {
   const ServersPage({super.key});

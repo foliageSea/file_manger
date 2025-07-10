@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
 import 'package:file_manger/app/constants/constants.dart';
-import 'package:file_manger/app/features/home/home_controller.dart';
+import 'package:file_manger/app/features/files/files_controller.dart';
 import 'package:file_manger/app/interfaces/file_storage.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/common_utils.dart';
@@ -22,16 +22,18 @@ class FilesPage extends StatefulWidget {
   const FilesPage({super.key, required this.serverModel, this.path});
 
   @override
-  State<FilesPage> createState() => _FilesPageState();
+  State<FilesPage> createState() => FilesPageState();
 }
 
-class _FilesPageState extends State<FilesPage> {
-  HomeController controller = Get.find();
+class FilesPageState extends State<FilesPage> {
+  late FilesController controller;
   final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    controller = Get.put(FilesController());
+    controller.setState(this);
 
     controller
         .init(widget.serverModel, widget.path)
@@ -111,18 +113,19 @@ class _FilesPageState extends State<FilesPage> {
   }
 
   Widget _buildFileListFutureBuilder() {
-    var errorWidget = CustomFutureBuilder.buildRefreshButton(
-      label: '重新加载',
-      onPressed: reload,
-    );
-
-    return CustomFutureBuilder<List<FileItem>>(
-      future: controller.future,
-      errorWidget: errorWidget,
-      builder: (context, snapshot) {
-        return Obx(() => _buildFilesList());
-      },
-    );
+    // var errorWidget = CustomFutureBuilder.buildRefreshButton(
+    //   label: '重新加载',
+    //   onPressed: reload,
+    // );
+    //
+    // return CustomFutureBuilder<List<FileItem>>(
+    //   future: controller.future,
+    //   errorWidget: errorWidget,
+    //   builder: (context, snapshot) {
+    //     return Obx(() => _buildFilesList());
+    //   },
+    // );
+    return Obx(() => _buildFilesList());
   }
 
   Widget _buildFilesList() {
@@ -171,6 +174,22 @@ class _FilesPageState extends State<FilesPage> {
           },
         );
       },
+    );
+  }
+
+  void animateToFirst() {
+    scrollController.animateTo(
+      0,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  void animateToLast() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
     );
   }
 

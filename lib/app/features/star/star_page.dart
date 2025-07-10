@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:file_manger/app/constants/constants.dart';
+import 'package:file_manger/app/features/files/files_page.dart';
 import 'package:file_manger/app/features/star/star_controller.dart';
 import 'package:file_manger/app/layouts/base_layout.dart';
 import 'package:file_manger/app/utils/file_icon_generator.dart';
@@ -8,8 +9,6 @@ import 'package:file_manger/app/widgets/ellipsis_text.dart';
 import 'package:file_manger/db/services/star_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../home/widgets/files_page.dart';
 
 class StarPage extends StatefulWidget {
   const StarPage({super.key});

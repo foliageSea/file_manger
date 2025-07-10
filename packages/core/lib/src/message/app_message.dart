@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 abstract class AppMessageAble {
@@ -6,9 +6,7 @@ abstract class AppMessageAble {
   Future<void> show({String? message});
   Future<void> dismiss();
   Future<void> showError(String message);
-  TransitionBuilder init({
-    TransitionBuilder? builder,
-  });
+  TransitionBuilder init({TransitionBuilder? builder});
 }
 
 class AppMessage implements AppMessageAble {
@@ -28,7 +26,10 @@ class AppMessage implements AppMessageAble {
 
   @override
   Future<void> show({String? message}) {
-    return EasyLoading.show(status: message);
+    return EasyLoading.show(
+      status: message,
+      indicator: const CupertinoActivityIndicator(),
+    );
   }
 
   @override
@@ -42,9 +43,7 @@ class AppMessage implements AppMessageAble {
   }
 
   @override
-  TransitionBuilder init({
-    TransitionBuilder? builder,
-  }) {
+  TransitionBuilder init({TransitionBuilder? builder}) {
     return EasyLoading.init(builder: builder);
   }
 }
