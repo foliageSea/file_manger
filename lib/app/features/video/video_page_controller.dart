@@ -247,8 +247,21 @@ class VideoPageController extends GetxController with AppLogMixin {
   }
 
   Future cachePosition() async {
+    // 检查视频是否已加载完成
+    if (!mediaPlayer.state.playing) {
+      log('视频未初始化完成，跳过进度保存');
+      return;
+    }
+
     var position = mediaPlayer.state.position.inSeconds;
     var duration = mediaPlayer.state.duration.inSeconds;
+
+    // 确保视频时长有效
+    if (duration <= 0) {
+      log('视频时长无效，跳过进度保存');
+      return;
+    }
+
     await _saveVideoProgress(position, duration);
   }
 

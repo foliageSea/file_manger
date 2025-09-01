@@ -75,12 +75,18 @@ class _VideoPageState extends State<VideoPage> {
                 subtitleViewConfiguration: const SubtitleViewConfiguration(
                   style: TextStyle(
                     height: 1.4,
-                    fontSize: 56.0,
+                    fontSize: 48.0,
                     letterSpacing: 0.0,
                     wordSpacing: 0.0,
                     color: Color(0xffffffff),
                     fontWeight: FontWeight.normal,
-                    backgroundColor: Color(0xaa000000),
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 3.0,
+                      ),
+                    ],
                   ),
                 ),
               ),
