@@ -43,7 +43,6 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
   bool _showCursor = true;
 
   Timer? _timer;
-  Timer? _cursorTimer;
 
   late /* private */ var playlist = controller(context).player.state.playlist;
   late bool buffering = controller(context).player.state.buffering;
@@ -88,6 +87,7 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
           if (mounted) {
             setState(() {
               visible = false;
+              _showCursor = false;
             });
             unshiftSubtitle();
           }
@@ -102,7 +102,6 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
       subscription.cancel();
     }
     _timer?.cancel();
-    _cursorTimer?.cancel();
     super.dispose();
   }
 
@@ -131,16 +130,14 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
     });
     shiftSubtitle();
     _timer?.cancel();
-    _cursorTimer?.cancel();
     
     _timer = Timer(_theme(context).controlsHoverDuration, () {
       if (mounted) {
         setState(() {
           visible = false;
+          _showCursor = false;
         });
         unshiftSubtitle();
-        // 启动光标隐藏计时器
-        _startCursorHideTimer();
       }
     });
   }
@@ -153,16 +150,14 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
     });
     shiftSubtitle();
     _timer?.cancel();
-    _cursorTimer?.cancel();
     
     _timer = Timer(_theme(context).controlsHoverDuration, () {
       if (mounted) {
         setState(() {
           visible = false;
+          _showCursor = false;
         });
         unshiftSubtitle();
-        // 启动光标隐藏计时器
-        _startCursorHideTimer();
       }
     });
   }
@@ -170,22 +165,10 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
   void onExit() {
     setState(() {
       visible = false;
+      _showCursor = false;
     });
     unshiftSubtitle();
     _timer?.cancel();
-    // 启动光标隐藏计时器
-    _startCursorHideTimer();
-  }
-
-  void _startCursorHideTimer() {
-    _cursorTimer?.cancel();
-    _cursorTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted && !visible) {
-        setState(() {
-          _showCursor = false;
-        });
-      }
-    });
   }
 
   @override
@@ -457,6 +440,7 @@ class _CustomVideoControlsState extends State<CustomVideoControls> {
                                                 if (mounted) {
                                                   setState(() {
                                                     visible = false;
+                                                    _showCursor = false;
                                                   });
                                                   unshiftSubtitle();
                                                 }
